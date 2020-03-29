@@ -83,11 +83,11 @@ static inline uint32_t getOwner(gamma_t *g, uint32_t x, uint32_t y) {
 }
 
 static inline bool checkDown(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
-    return y == 0 ? 0 : isMine(g, player, x, y - 1);
+    return y == 0 ? false : isMine(g, player, x, y - 1);
 }
 
 static inline bool checkUp(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
-    return y + 1 == g->height ? 0 : isMine(g, player, x, y + 1);
+    return y + 1 == g->height ? false : isMine(g, player, x, y + 1);
 }
 
 static inline bool checkLeft(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
@@ -95,7 +95,7 @@ static inline bool checkLeft(gamma_t *g, uint32_t player, uint32_t x, uint32_t y
 }
 
 static inline bool checkRight(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
-    return x + 1 == g->width ? 0 : isMine(g, player, x + 1, y);
+    return x + 1 == g->width ? false : isMine(g, player, x + 1, y);
 }
 
 
@@ -224,7 +224,6 @@ void gamma_delete(gamma_t *g) {
 // moga spadac posiadane obszary wiec chyba trzeba sprawdzac bfsem ile tego jest
 // chyba tak ze z sasiadujacych zapuszczam bfsa i ile sie powtorzy
 
-// DONE
 bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     if (wrongInput(g, player) ||
         wrongCoordinates(g, x, y) ||
@@ -252,6 +251,7 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     if (wrongInput(g, player) || wrongCoordinates(g, x, y) ||
         isEmpty(g, x, y) || isMine(g, player, x, y))
         return false;
+    // TODO jeszcze czy nie uzyl wczesniej golden move xd
 
     // TODO jeszcze moge powiekszyc obszarow gracza co traci poza limit areas
 
@@ -292,6 +292,7 @@ uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
     else if (g->members[player - 1]->areas == g->areas) {
         uint32_t output = 0;
 
+        // TODO czy musze kwadratowo po calej planszy?
         for (uint32_t x = 0; x < g->width; x++)
             for (uint32_t y = 0; y < g->height; y++)
                 output += isEmpty(g, x, y) && numNeighbours(g, player, x, y) != 0;
