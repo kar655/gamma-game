@@ -24,8 +24,8 @@ set(SOURCE_FILES
     src/gamma.c
     src/gamma.h
     src/main_to_tests.c
-#    src/gamma_test.c
-    src/findUnionLib/findUnion.c src/findUnionLib/findUnion.h)
+#    src/gamma_test.gic
+    src/findUnionLib/findUnion.c src/findUnionLib/findUnion.h src/playerLib/player.c src/playerLib/player.h)
 
 # Wskazujemy plik wykonywalny.
 add_executable(gamma ${SOURCE_FILES})

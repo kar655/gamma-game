@@ -1,25 +1,27 @@
 
 #include "findUnion.h"
 
-typedef struct Node Node;
 
-struct Node {
-    uint32_t x;
-    uint32_t y;
-    uint32_t rank;
-
-    Node *parent;
-};
-
-
-Node *makeSet(uint32_t x, uint32_t y) {
+Node *newNode(uint32_t player) {
     Node *output = (Node *) malloc(sizeof(Node));
     if (output == NULL)
         return NULL;
 
-    *output = (Node) {x, y, 0, output};
+    *output = (Node) {false, 0, player, 0, output};
 
     return output;
+}
+
+inline uint32_t getData(Node *elem) {
+    return elem == NULL ? 0 : elem->owner;
+}
+
+void setData(Node *elem, uint32_t id) {
+    elem->owner = id;
+}
+
+inline bool isAdded(Node *elem) {
+    return elem == NULL ? true : elem->added;
 }
 
 Node *find(Node *elem) {
@@ -27,15 +29,18 @@ Node *find(Node *elem) {
         return NULL;
 
     while (elem->parent != elem) {
-        elem = elem->parent;
         elem->parent = find(elem->parent);
+        elem = elem->parent;
     }
 
     return elem;
 }
 
 bool sameRoot(Node *a, Node *b) {
-    return find(a) == find(b);
+    if (a == NULL || b == NULL)
+        return false;
+    else
+        return find(a) == find(b);
 }
 
 Node *merge(Node *a, Node *b) {

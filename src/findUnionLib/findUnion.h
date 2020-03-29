@@ -6,10 +6,26 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+
 typedef struct Node Node;
 
+struct Node {
+    bool added;
+    uint32_t currentReset;
+    uint32_t owner;
+    uint32_t rank;
 
-Node *makeSet(uint32_t x, uint32_t y);
+    Node *parent;
+};
+
+
+Node *newNode(uint32_t player);
+
+uint32_t getData(Node *elem);
+
+void setData(Node *elem, uint32_t id);
+
+bool isAdded(Node *elem);
 
 Node *find(Node *elem);
 
