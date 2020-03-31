@@ -35,7 +35,7 @@ void addRoot(Member player, Node *elem) {
     // have space
     if (player->areas >= player->size) {
         player->size *= 2;
-        player->roots = realloc(player->roots, player->size);
+        player->roots = (Node**) realloc(player->roots, player->size * sizeof(Node *));
     }
 
     player->roots[player->areas] = elem;

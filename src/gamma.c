@@ -136,14 +136,17 @@ static uint32_t areasChange (gamma_t *g, uint32_t player, uint32_t x, uint32_t y
     arr[3] = getDown(g, x, y);
 
     uint32_t output = 0;
+    uint32_t division = 1;
 
     for (int i = 0; i < 4; i++) {
         for (int j = i + 1; j < 4; j++) {
-            output += !sameRoot(arr[i], arr[j]);
+            if (sameRoot(arr[i], arr[j]))
+                division = 2;
+            output += arr[i] != NULL && arr[j] != NULL && !sameRoot(arr[i], arr[j]);
         }
     }
 
-    return output / 2;
+    return output / division;
 }
 
 //-----------------------------------------------------------------------------
