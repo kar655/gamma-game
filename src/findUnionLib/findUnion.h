@@ -37,6 +37,7 @@ bool sameRoot(Node *a, Node *b);
 
 Node *merge(Node *a, Node *b);
 
+
 void removeNode(Node *elem);
 
 #endif //GAMMA_FINDUNION_H

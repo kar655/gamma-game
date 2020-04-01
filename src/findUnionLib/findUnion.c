@@ -69,6 +69,7 @@ Node *merge(Node *a, Node *b) {
     }
 }
 
+
 void removeNode(Node *elem) {
     free(elem);
     elem = NULL;
