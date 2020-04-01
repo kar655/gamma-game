@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <assert.h>
 
 
 #define NUM_GOLDEN_MOVES 1
@@ -27,7 +27,7 @@ static inline bool positive(uint32_t num) {
     return num > 0;
 }
 
-static void initMembers(Member*members, uint32_t players) {
+static void initMembers(Member *members, uint32_t players) {
     for (unsigned int i = 0; i < players; i++) {
         members[i] = newMember(i + 1);
     }
@@ -36,12 +36,14 @@ static void initMembers(Member*members, uint32_t players) {
 static void initBoard(Node ***board, uint32_t width, uint32_t height) {
     for (uint32_t i = 0; i < width; i++)
         for (uint32_t j = 0; j < height; j++) {
-            board[i][j] =  newNode(0);
+            board[i][j] = newRoot(0, i, j);
             if (board[i][j] == NULL)
                 exit(1);
             // TODO poprawic
         }
 }
+
+static inline Member getPlayer(gamma_t *g, uint32_t player);
 
 static inline bool wrongInput(gamma_t *g, uint32_t player) {
     return g == NULL ||
@@ -57,6 +59,10 @@ static inline bool isEmpty(gamma_t *g, uint32_t x, uint32_t y) {
     return g->board[x][y]->owner == 0;
 }
 
+static inline bool hasGoldenMoves(gamma_t *g, uint32_t player) {
+    return getPlayer(g, player)->goldenMoves < g->numGoldenMoves;
+}
+
 static bool isMineNode(gamma_t *g, uint32_t player, Node *elem) {
     if (elem == NULL)
         return false;
@@ -68,7 +74,7 @@ static inline Member getPlayer(gamma_t *g, uint32_t player) {
     return g->members[player - 1];
 }
 
-static inline bool isMine (gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
+static inline bool isMine(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     return g->board[x][y]->owner == getPlayer(g, player)->id;
 }
 
@@ -80,10 +86,13 @@ static inline uint32_t getAreas(gamma_t *g, uint32_t player) {
     return g->members[player - 1]->areas;
 }
 
+static inline AvlTree getPlayerRoots(gamma_t *g, uint32_t player) {
+    return getPlayer(g, player)->roots;
+}
+
 static void takeField(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     g->available--;
     g->members[player - 1]->owned++;
-    // g->board[x][y] = g->members[player - 1]->id;
     setData(g->board[x][y], getPlayer(g, player)->id);
 }
 
@@ -92,7 +101,6 @@ static inline uint32_t getOwner(gamma_t *g, uint32_t x, uint32_t y) {
 }
 
 
-// TODO przerobic te checki aby zwracaly Node* a isMine obudowac to
 static inline Node *getDown(gamma_t *g, uint32_t x, uint32_t y) {
     return y == 0 ? NULL : g->board[x][y - 1];
 }
@@ -105,10 +113,24 @@ static inline Node *getLeft(gamma_t *g, uint32_t x, uint32_t y) {
     return x == 0 ? NULL : g->board[x - 1][y];
 }
 
-static inline Node *getRight(gamma_t *g,  uint32_t x, uint32_t y) {
+static inline Node *getRight(gamma_t *g, uint32_t x, uint32_t y) {
     return x + 1 == g->width ? NULL : g->board[x + 1][y];
 }
 
+
+static void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *center) {
+    for (int i = 0; i < 4; i++) {
+        if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
+            getPlayer(g, player)->roots = deleteNode(getPlayerRoots(g, player), arr[i]);
+        }
+    }
+
+    for (int i = 0; i < 4; i++) {
+        if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
+            merge(center, arr[i]);
+        }
+    }
+}
 
 // num of friendly fields
 static uint32_t numNeighbours(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
@@ -126,7 +148,7 @@ static uint32_t numNeighbours(gamma_t *g, uint32_t player, uint32_t x, uint32_t 
 
 // jak zmieni sie ilosz obszarow gracza gdyby dolozyl pionek na x, y
 // o ile spadnie
-static uint32_t areasChange (gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
+static uint32_t areasChange(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     // left up right down
     Node *arr[4];
 
@@ -136,17 +158,24 @@ static uint32_t areasChange (gamma_t *g, uint32_t player, uint32_t x, uint32_t y
     arr[3] = getDown(g, x, y);
 
     uint32_t output = 0;
-    uint32_t division = 1;
 
     for (int i = 0; i < 4; i++) {
-        for (int j = i + 1; j < 4; j++) {
-            if (sameRoot(arr[i], arr[j]))
-                division = 2;
-            output += arr[i] != NULL && arr[j] != NULL && !sameRoot(arr[i], arr[j]);
+        if (arr[i] != NULL && !isAdded(arr[i]) && isMineNode(g, player, arr[i])) {
+            setAdded(arr[i], true);
+            output++;
         }
     }
 
-    return output / division;
+    for (int i = 0; i < 4; i++)
+        if (arr[i] != NULL && isMineNode(g, player, arr[i]))
+            setAdded(arr[i], false);
+
+
+    insert(&getPlayer(g, player)->roots, g->board[x][y]);
+    mergeFields(g, player, arr, g->board[x][y]);
+    assert(output <= 4);
+
+    return output - 1;
 }
 
 //-----------------------------------------------------------------------------
@@ -202,10 +231,6 @@ void gamma_delete(gamma_t *g) {
 }
 
 
-// w ruchach ogolnie
-// moga spadac posiadane obszary wiec chyba trzeba sprawdzac bfsem ile tego jest
-// chyba tak ze z sasiadujacych zapuszczam bfsa i ile sie powtorzy
-
 bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     if (wrongInput(g, player) ||
         wrongCoordinates(g, x, y) ||
@@ -219,14 +244,13 @@ bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
         }
 
         takeField(g, player, x, y);
-        addRoot(getPlayer(g, player), g->board[x][y]);//newNode(getPlayer(g, player)->id));
-//        getPlayer(g, player)->areas++;
+        getPlayer(g, player)->areas++;
+        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
 
     }
     else {
         takeField(g, player, x, y);
         getPlayer(g, player)->areas -= areasChange(g, player, x, y);
-        // TODO moze spadac liczba obszarow
     }
 
     return true;
@@ -234,12 +258,23 @@ bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
 
 bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     if (wrongInput(g, player) || wrongCoordinates(g, x, y) ||
-        isEmpty(g, x, y) || isMine(g, player, x, y))
+        isEmpty(g, x, y) || isMine(g, player, x, y) ||
+        !hasGoldenMoves(g, player))
         return false;
-    // TODO jeszcze czy nie uzyl wczesniej golden move xd
 
-    // TODO jeszcze moge powiekszyc obszarow gracza co traci poza limit areas
+    // TODO check czy nie rozspojnie gracza kotremu zabieram
+    // i tak musze zburzyc i tak???
 
+    Member attackedPlayer = getPlayer(g, getOwner(g, x, y));
+
+
+    // areas of the previous owner will decrease by 1
+//    if (numNeighbours(g, getPlayer(g, x, y), x, y) == 0) {
+//        //todo usunac z tablicy rootow
+//    }
+//    else { //
+//
+//    }
 
     if (numNeighbours(g, player, x, y) == 0) {
         if (getAreas(g, player) == g->areas)
@@ -254,7 +289,7 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     }
     else {
         g->available++;
-        g->members[getOwner(g, x, y) - 1]->owned--;
+        getPlayer(g, getOwner(g, x, y))->owned--;
 
         takeField(g, player, x, y);
     }
@@ -262,12 +297,11 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     return true;
 }
 
-// DONE
 uint64_t gamma_busy_fields(gamma_t *g, uint32_t player) {
     if (wrongInput(g, player))
         return 0;
     else
-        return g->members[player - 1]->owned;
+        return getPlayer(g, player)->owned;
 }
 
 // DONE

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "../findUnionLib/findUnion.h"
+#include "../Avl_Tree_lib/avl_tree.h"
 
 
 struct member {
@@ -17,17 +18,17 @@ struct member {
     uint32_t goldenMoves;
     // array of roots of areas
     uint32_t size;
-    Node **roots;
+    AvlTree roots;
 };
 
 
 typedef struct member member;
-typedef member* Member;
+typedef member *Member;
 
 Member newMember(uint32_t id);
 
 void removeMember(Member player);
 
-void addRoot(Member player, Node *elem);
+//void addRoot(Member player, Node *elem);
 
 #endif //GAMMA_PLAYER_H

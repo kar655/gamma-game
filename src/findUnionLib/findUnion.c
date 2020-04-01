@@ -2,12 +2,12 @@
 #include "findUnion.h"
 
 
-Node *newNode(uint32_t player) {
+Node *newRoot(uint32_t player, uint32_t x, uint32_t y) {
     Node *output = (Node *) malloc(sizeof(Node));
     if (output == NULL)
         return NULL;
 
-    *output = (Node) {false, 0, player, 0, output};
+    *output = (Node) {x, y, false, 0, player, 0, output};
 
     return output;
 }
@@ -21,7 +21,13 @@ void setData(Node *elem, uint32_t id) {
 }
 
 inline bool isAdded(Node *elem) {
-    return elem == NULL ? true : elem->added;
+    return elem == NULL ? true : find(elem)->added;
+}
+
+void setAdded(Node *elem, bool state) {
+    if (elem == NULL)
+        return;
+    find(elem)->added = state;
 }
 
 Node *find(Node *elem) {

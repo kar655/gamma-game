@@ -10,6 +10,8 @@
 typedef struct Node Node;
 
 struct Node {
+    uint32_t x, y;
+
     bool added;
     uint32_t currentReset;
     uint32_t owner;
@@ -19,13 +21,15 @@ struct Node {
 };
 
 
-Node *newNode(uint32_t player);
+Node *newRoot(uint32_t player, uint32_t x, uint32_t y);
 
 uint32_t getData(Node *elem);
 
 void setData(Node *elem, uint32_t id);
 
 bool isAdded(Node *elem);
+
+void setAdded(Node *elem, bool state);
 
 Node *find(Node *elem);
 

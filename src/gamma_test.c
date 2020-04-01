@@ -66,17 +66,17 @@ int main() {
 //  printf("%s\n", ptr);
   assert(gamma_free_fields(g, 1) == 95);
   assert(gamma_move(g, 1, 5, 5));
-//  assert(!gamma_move(g, 1, 6, 6));      // TU BLAD
+  assert(!gamma_move(g, 1, 6, 6));
 
-//  assert(gamma_busy_fields(g, 1) == 5);
-//  assert(gamma_free_fields(g, 1) == 10);
-//  assert(gamma_move(g, 2, 2, 1));
-//  assert(gamma_move(g, 2, 1, 1));
-//  assert(gamma_free_fields(g, 1) == 9);
-//  assert(gamma_free_fields(g, 2) == 92);
-//  assert(!gamma_move(g, 2, 0, 1));
-//  assert(gamma_golden_possible(g, 2));
-//  assert(!gamma_golden_move(g, 2, 0, 1));
+  assert(gamma_busy_fields(g, 1) == 5);
+  assert(gamma_free_fields(g, 1) == 10);
+  assert(gamma_move(g, 2, 2, 1));
+  assert(gamma_move(g, 2, 1, 1));
+  assert(gamma_free_fields(g, 1) == 9);
+  assert(gamma_free_fields(g, 2) == 92);
+  assert(!gamma_move(g, 2, 0, 1));
+  assert(gamma_golden_possible(g, 2));
+//  assert(!gamma_golden_move(g, 2, 0, 1));       // blad
 //  assert(gamma_golden_move(g, 2, 5, 5));
 //  assert(!gamma_golden_possible(g, 2));
 //  assert(gamma_move(g, 2, 6, 6));
