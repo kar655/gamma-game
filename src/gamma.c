@@ -23,6 +23,9 @@ struct gamma {
     Node ***board;
 };
 
+void DATACHECK(gamma_t *g);
+bool special = false;
+
 static inline bool positive(uint32_t num) {
     return num > 0;
 }
@@ -117,18 +120,20 @@ static inline Node *getRight(gamma_t *g, uint32_t x, uint32_t y) {
 }
 
 
-static void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *center) {
+static void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *biggest) {
     for (int i = 0; i < 4; i++) {
-        if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
+        if (arr[i] != NULL && isMineNode(g, player, arr[i]) && find(arr[i]) != biggest) {
             getPlayer(g, player)->roots = deleteNode(getPlayerRoots(g, player), find(arr[i]));
+            // todo arr[i] czy find(arr[i])
+            merge(biggest, arr[i]);
         }
     }
 
-    for (int i = 0; i < 4; i++) {
-        if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
-            merge(center, arr[i]);
-        }
-    }
+//    for (int i = 0; i < 4; i++) {
+//        if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
+//            merge(center, arr[i]);
+//        }
+//    }
 }
 
 // num of friendly fields
@@ -158,24 +163,36 @@ static uint32_t areasChange(gamma_t *g, uint32_t player, uint32_t x, uint32_t y,
 
     uint32_t output = 0;
 
+    Node *biggest = NULL;
+
     for (int i = 0; i < 4; i++) {
-        if (arr[i] != NULL && !isAdded(arr[i]) && isMineNode(g, player, arr[i])) {
-            setAdded(arr[i], true);
+        if (arr[i] != NULL && !isAdded(find(arr[i])) && isMineNode(g, player, arr[i])) {
+            setAdded(find(arr[i]), true);
             output++;
+
+            if (biggest == NULL || biggest->rank < find(arr[i])->rank) {
+                biggest = find(arr[i]);
+            }
         }
     }
 
+    // todo tu setAdded powinno byc od ROOTa
+    // bo interesuje mnie ze caly obszar dodany a nie pojedyncze pole
+
+    // TODO ale tutaj nie wiem bo nie pamietac co to mialo robic
+    // albo juz jest OK XD
     for (int i = 0; i < 4; i++)
         if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
-            setAdded(arr[i], false);
+            setAdded(find(arr[i]), false);
             if (!merged)
                 insert(&getPlayer(g, player)->roots, find(arr[i]));
         }
 
 
     if (merged) {
-        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
-        mergeFields(g, player, arr, g->board[x][y]);
+        // insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
+        mergeFields(g, player, arr, biggest);
+        merge(biggest, g->board[x][y]);
     }
 //    else {
 //        insert(&getPlayer(g, player)->roots, find());
@@ -279,6 +296,12 @@ bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
         !isEmpty(g, x, y))
         return false;
 
+    if (!special) {
+        DATACHECK(g); // 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+    }
+    else {
+        special = false;
+    }
     // new area
     if (numNeighbours(g, player, x, y) == 0) {
         if (getAreas(g, player) == g->areas) {
@@ -306,7 +329,7 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
 
     // TODO check czy nie rozspojnie gracza kotremu zabieram
     // i tak musze zburzyc i tak???
-
+    DATACHECK(g); // 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     Member attackedPlayer = getPlayer(g, getOwner(g, x, y));
     attackedPlayer->roots = deleteNode(attackedPlayer->roots, find(g->board[x][y]));
     // removes all connections between attackedPlayer's fields
@@ -335,7 +358,9 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     // i mergeFields?
 
     // TODO HERE !!!!!!!!!!!!!!!!!!!!!!!!!
-    if (attackedPlayer->areas + newAreas <= g->areas) {
+    special = true;
+    attackedPlayer->areas += newAreas;
+    if (attackedPlayer->areas <= g->areas) {
         // normalne przejecie chyba moze nawet na chama z gamma_move
         // dla gracza player
         if (gamma_move(g, player, x, y)) {
@@ -349,6 +374,7 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
             // usunac lewo prawo gora dol
 
             gamma_move(g, attackedPlayer->id, x, y);
+//            attackedPlayer->areas -= newAreas - 1;
 
             //
             return false;
@@ -359,6 +385,7 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
         // tylko dla gracza attackedPlayer
 
         gamma_move(g, attackedPlayer->id, x, y);
+//        attackedPlayer->areas -= newAreas - 1;
 
         return false;
     }
@@ -393,6 +420,7 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
 }
 
 uint64_t gamma_busy_fields(gamma_t *g, uint32_t player) {
+    DATACHECK(g); // 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     if (wrongInput(g, player))
         return 0;
     else
@@ -439,6 +467,8 @@ uint64_t iterate(gamma_t *g, AvlTree tree, uint32_t id, bool state) {
 
 // DONE
 uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
+    DATACHECK(g); // 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+
     if (wrongInput(g, player))
         return 0;
     else if (getAreas(g, player) == g->areas) {
@@ -463,6 +493,8 @@ uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
 }
 
 bool gamma_golden_possible(gamma_t *g, uint32_t player) {
+    DATACHECK(g); // 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+    return false;
     if (wrongInput(g, player) || !hasGoldenMoves(g, player))
         return false;
 
@@ -512,3 +544,63 @@ char *gamma_board(gamma_t *g) {
 //
 //    return output;
 }
+
+void checkBoard(gamma_t *g) {
+    for (uint32_t x = 0; x < g->width; x++) {
+        for (uint32_t y = 0; y < g->height; y++) {
+            // Node *
+            assert(g->board[x][y] != NULL);
+            assert(g->board[x][y]->x == x);
+            assert(g->board[x][y]->y == y);
+            assert(g->board[x][y]->parent != NULL);
+            assert(g->board[x][y]->added == false);
+            assert(g->board[x][y]->owner <= g->players);
+            assert(g->board[x][y]->parent->owner == g->board[x][y]->owner);
+
+            if (g->board[x][y]->owner == 0) {
+                assert(g->board[x][y]->parent == g->board[x][y]);
+            }
+            else {
+                if (g->board[x][y]->parent == g->board[x][y]) {
+                    assert(exists(getPlayer(g, getOwner(g, x, y))->roots, g->board[x][y]));
+                }
+                else {
+                    assert(!exists(getPlayer(g, getOwner(g, x, y))->roots, g->board[x][y]));
+                    assert(exists(getPlayer(g, getOwner(g, x, y))->roots, find(g->board[x][y])));
+                }
+
+            }
+        }
+    }
+}
+
+uint32_t checkTree(AvlTree tree) {
+    if (tree == NULL)
+        return 0;
+
+    assert(tree->data != NULL);
+    assert(tree->data->parent == tree->data);
+    return 1 + checkTree(tree->left) +
+           checkTree(tree->right);
+//    assert()
+}
+
+void checkPlayers(gamma_t *g) {
+    for (uint32_t i = 1; i <= g->players; i++) {
+        assert(getPlayer(g, i) != NULL);
+        assert(getPlayer(g, i)->id == i);
+        assert(getPlayer(g, i)->areas <= g->areas);
+        assert(getPlayer(g, i)->goldenMoves <= 1);
+        assert(checkTree(getPlayer(g, i)->roots) == getAreas(g, i));
+    }
+}
+
+void DATACHECK(gamma_t *g) {
+//    checkBoard(g);
+//    checkPlayers(g);
+}
+
+/// TODO
+/// sciana placzu
+
+// blad w 67 standard

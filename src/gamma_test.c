@@ -72,7 +72,7 @@ int main() {
   assert(gamma_free_fields(g, 1) == 10);
   assert(gamma_move(g, 2, 2, 1));
   assert(gamma_move(g, 2, 1, 1));
-  assert(gamma_free_fields(g, 1) == 9);
+  assert(gamma_free_fields(g, 1) == 9);     // tu wywala checkTree
   assert(gamma_free_fields(g, 2) == 92);
   assert(!gamma_move(g, 2, 0, 1));
   assert(gamma_golden_possible(g, 2));

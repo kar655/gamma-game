@@ -33,6 +33,8 @@ AvlTree deleteNode(AvlTree tree, Node *field);
 // zamienia added na true i potem drugi raz i zamienia added na false
 // bool iterate(AvlTree tree);
 
+bool exists(AvlTree tree, Node *field);
+
 // Delete AvlTree but not fields
 void removeAll(AvlTree tree);
 
