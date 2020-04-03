@@ -120,7 +120,7 @@ static inline Node *getRight(gamma_t *g, uint32_t x, uint32_t y) {
 static void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *center) {
     for (int i = 0; i < 4; i++) {
         if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
-            getPlayer(g, player)->roots = deleteNode(getPlayerRoots(g, player), arr[i]);
+            getPlayer(g, player)->roots = deleteNode(getPlayerRoots(g, player), find(arr[i]));
         }
     }
 
@@ -147,7 +147,7 @@ static uint32_t numNeighbours(gamma_t *g, uint32_t player, uint32_t x, uint32_t 
 
 // jak zmieni sie ilosz obszarow gracza gdyby dolozyl pionek na x, y
 // o ile spadnie
-static uint32_t areasChange(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
+static uint32_t areasChange(gamma_t *g, uint32_t player, uint32_t x, uint32_t y, bool merged) {
     // left up right down
     Node *arr[4];
 
@@ -166,14 +166,26 @@ static uint32_t areasChange(gamma_t *g, uint32_t player, uint32_t x, uint32_t y)
     }
 
     for (int i = 0; i < 4; i++)
-        if (arr[i] != NULL && isMineNode(g, player, arr[i]))
+        if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
             setAdded(arr[i], false);
+            if (!merged)
+                insert(&getPlayer(g, player)->roots, find(arr[i]));
+        }
 
 
-    insert(&getPlayer(g, player)->roots, g->board[x][y]);
-    mergeFields(g, player, arr, g->board[x][y]);
+    if (merged) {
+        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
+        mergeFields(g, player, arr, g->board[x][y]);
+    }
+//    else {
+//        insert(&getPlayer(g, player)->roots, find());
+//        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
+//        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
+//        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
+//    }
+
+
     assert(output <= 4);
-
     return output - 1;
 }
 
@@ -280,7 +292,7 @@ bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     }
     else {
         takeField(g, player, x, y);
-        getPlayer(g, player)->areas -= areasChange(g, player, x, y);
+        getPlayer(g, player)->areas -= areasChange(g, player, x, y, true);
     }
 
     return true;
@@ -296,13 +308,14 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     // i tak musze zburzyc i tak???
 
     Member attackedPlayer = getPlayer(g, getOwner(g, x, y));
-    attackedPlayer->roots = deleteNode(attackedPlayer->roots, g->board[x][y]);
+    attackedPlayer->roots = deleteNode(attackedPlayer->roots, find(g->board[x][y]));
     // removes all connections between attackedPlayer's fields
     clearRelations(g, g->board[x][y], attackedPlayer->id);
     // tymczasowo zamieniam wlasciciela
     g->available++;
     attackedPlayer->owned--;
     setData(g->board[x][y], 0);
+    g->board[x][y]->added = false;
 
     // todo cos chyba bedzie nie tak z drzewem avl albo i nie
     /// bo dodaje juz zmergowane czyi tak naprawde x i y beda pochodzic od roota
@@ -314,7 +327,7 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     buildArea(g, getDown(g, x, y), getDown(g, x, y), attackedPlayer->id);
 
     // tylko to zle ze merguje juz
-    uint32_t newAreas = areasChange(g, attackedPlayer->id, x, y);
+    uint32_t newAreas = areasChange(g, attackedPlayer->id, x, y, false);
 
     // policzyc czy obszary beda sie zgadzac
     // jesli tak to te 4 dodac do drzewa gracza i zwykly move
@@ -325,10 +338,28 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     if (attackedPlayer->areas + newAreas <= g->areas) {
         // normalne przejecie chyba moze nawet na chama z gamma_move
         // dla gracza player
+        if (gamma_move(g, player, x, y)) {
+            // gracz przejal pole normalnie
+            getPlayer(g, player)->goldenMoves++;
+            return true;
+        }
+        else {
+            // gracz nie moze przejac pola
+            // powrocic do stanu sprzed ataku
+            // usunac lewo prawo gora dol
+
+            gamma_move(g, attackedPlayer->id, x, y);
+
+            //
+            return false;
+        }
     }
     else { // cant do this golden_move
         // tutaj tez normalne gamma_move ??
         // tylko dla gracza attackedPlayer
+
+        gamma_move(g, attackedPlayer->id, x, y);
+
         return false;
     }
 
@@ -368,17 +399,61 @@ uint64_t gamma_busy_fields(gamma_t *g, uint32_t player) {
         return getPlayer(g, player)->owned;
 }
 
+// todo utworzyc jakies gamma_helper_lib
+
+uint64_t dfs(gamma_t *g, Node *elem, uint32_t id, bool state) {
+    if (elem == NULL)
+        return 0;
+
+    uint64_t output = 0;
+    // empty
+    if (elem->added != state && elem->owner == 0) {
+        elem->added = state;
+        output++;
+    }   // is mine
+    else if (elem->added != state && elem->owner == id) {
+        elem->added = state;
+        output += dfs(g, getLeft(g, elem->x, elem->y), id, state);
+        output += dfs(g, getUp(g, elem->x, elem->y), id, state);
+        output += dfs(g, getRight(g, elem->x, elem->y), id, state);
+        output += dfs(g, getDown(g, elem->x, elem->y), id, state);
+    }
+
+    return output;
+}
+
+uint64_t iterate(gamma_t *g, AvlTree tree, uint32_t id, bool state) {
+    if (tree == NULL)
+        return 0;
+
+    uint64_t output = 0;
+
+
+    output += dfs(g, tree->data, id, state);
+    output += iterate(g, tree->left, id, state);
+    output += iterate(g, tree->right, id, state);
+
+    return output;
+
+}
+
 // DONE
 uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
     if (wrongInput(g, player))
         return 0;
-    else if (g->members[player - 1]->areas == g->areas) {
-        uint32_t output = 0;
+    else if (getAreas(g, player) == g->areas) {
+//        uint32_t output = 0;
+//
+////        // TODO czy musze kwadratowo po calej planszy?
+//        for (uint32_t x = 0; x < g->width; x++)
+//            for (uint32_t y = 0; y < g->height; y++)
+//                output += isEmpty(g, x, y) && numNeighbours(g, player, x, y) != 0;
 
-        // TODO czy musze kwadratowo po calej planszy?
-        for (uint32_t x = 0; x < g->width; x++)
-            for (uint32_t y = 0; y < g->height; y++)
-                output += isEmpty(g, x, y) && numNeighbours(g, player, x, y) != 0;
+        uint64_t output = iterate(g, getPlayer(g, player)->roots, getPlayer(g, player)->id, true);
+        uint64_t test = iterate(g, getPlayer(g, player)->roots, getPlayer(g, player)->id, false);
+
+//        printf("Output: %lu\n", output);
+//        printf("Test: %lu\n", test);
 
         return output;
     }
@@ -388,23 +463,21 @@ uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
 }
 
 bool gamma_golden_possible(gamma_t *g, uint32_t player) {
-    if (wrongInput(g, player))
+    if (wrongInput(g, player) || !hasGoldenMoves(g, player))
         return false;
 
-    if (getAreas(g, player) == g->areas) {
-        for (uint32_t x = 0; x < g->width; x++)
-            for (uint32_t y = 0; y < g->height; y++)
-                if (numNeighbours(g, player, x, y) != 0 && isEnemy(g, player, x, y))
-                    return true;
-    }
-    else {
-        // enemy took anything
-        for (uint32_t p = 0; p < g->players; p++)
-            if (p != player - 1 && g->members[p]->owned > 0)
-                return true;
-    }
-
-    return false;
+//    if (getAreas(g, player) == g->areas) {
+//
+//        for (uint32_t x = 0; x < g->width; x++)
+//            for (uint32_t y = 0; y < g->height; y++)
+//                if (numNeighbours(g, player, x, y) != 0 && isEnemy(g, player, x, y))
+//                    return true;
+//    }
+//    else {
+    return g->available +
+           (uint64_t) getPlayer(g, player)->owned
+           != (uint64_t) g->width * (uint64_t) g->height;
+//    }
 }
 
 char *gamma_board(gamma_t *g) {

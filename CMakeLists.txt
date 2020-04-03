@@ -24,7 +24,9 @@ set(SOURCE_FILES
     src/gamma.c
     src/gamma.h
 #    src/main_to_tests.c
-    src/gamma_test.c
+#    src/gamma_test.c
+    # 3 i 4 nie dziala
+    src/testy_do_duzego/gbz/gbz4.c
     src/findUnionLib/findUnion.c src/findUnionLib/findUnion.h
     src/playerLib/player.c src/playerLib/player.h
     src/Avl_Tree_lib/avl_tree.c src/Avl_Tree_lib/avl_tree.h)

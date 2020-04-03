@@ -76,19 +76,20 @@ int main() {
   assert(gamma_free_fields(g, 2) == 92);
   assert(!gamma_move(g, 2, 0, 1));
   assert(gamma_golden_possible(g, 2));
-//  assert(!gamma_golden_move(g, 2, 0, 1));       // blad
-//  assert(gamma_golden_move(g, 2, 5, 5));
-//  assert(!gamma_golden_possible(g, 2));
-//  assert(gamma_move(g, 2, 6, 6));
-//  assert(gamma_busy_fields(g, 1) == 4);
-//  assert(gamma_free_fields(g, 1) == 91);
-//  assert(gamma_busy_fields(g, 2) == 5);
-//  assert(gamma_free_fields(g, 2) == 13);
-//  assert(gamma_golden_move(g, 1, 3, 1));
-//  assert(gamma_busy_fields(g, 1) == 5);
-//  assert(gamma_free_fields(g, 1) == 8);
-//  assert(gamma_busy_fields(g, 2) == 4);
-//  assert(gamma_free_fields(g, 2) == 10);
+  assert(!gamma_golden_move(g, 2, 0, 1));
+  assert(gamma_golden_move(g, 2, 5, 5));
+  assert(!gamma_golden_possible(g, 2));
+  assert(gamma_move(g, 2, 6, 6));
+  assert(gamma_busy_fields(g, 1) == 4);
+  assert(gamma_free_fields(g, 1) == 91);
+  assert(gamma_busy_fields(g, 2) == 5);
+//  printf("ERROR MESSAGE EXPECTING 13 GOT %lu\n", gamma_free_fields(g, 2));
+  assert(gamma_free_fields(g, 2) == 13);        //blad
+  assert(gamma_golden_move(g, 1, 3, 1));
+  assert(gamma_busy_fields(g, 1) == 5);
+  assert(gamma_free_fields(g, 1) == 8);
+  assert(gamma_busy_fields(g, 2) == 4);
+  assert(gamma_free_fields(g, 2) == 10);
 //
 //  char *p = gamma_board(g);
 //  assert(p);

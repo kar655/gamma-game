@@ -6,12 +6,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-// TODO sortowanie po x, y
-struct TreeNode {
-    Node *data; // This is node from FindUnion
-    int height;
-    AvlTree left, right;
-};
+
 
 
 // returns bigger int
@@ -181,6 +176,9 @@ static AvlTree minValueNode(AvlTree tree) {
 
 
 void insert(AvlTree *tree, Node* field) {
+//    if (field == NULL)
+//        return;
+
     if ((*tree) == NULL) {
         *tree = newNode(field);
         return;

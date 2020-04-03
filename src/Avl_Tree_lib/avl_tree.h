@@ -15,13 +15,23 @@ typedef struct TreeNode TreeNode;
 
 typedef TreeNode* AvlTree;
 
+// TODO sortowanie po x, y
+struct TreeNode {
+    Node *data; // This is node from FindUnion
+    int height;
+    AvlTree left, right;
+};
+
 // Add new node to tree
 void insert(AvlTree *tree, Node* field);
 
 // Removes node with name = key
 AvlTree deleteNode(AvlTree tree, Node *field);
 
-// opdala bfsa jak print xd
+// przechodzi bfsem po wszystkich pustych sasiadujacych
+// i liczy ile ich jest dla kazdego TreeNoda w root gracza
+// zamienia added na true i potem drugi raz i zamienia added na false
+// bool iterate(AvlTree tree);
 
 // Delete AvlTree but not fields
 void removeAll(AvlTree tree);

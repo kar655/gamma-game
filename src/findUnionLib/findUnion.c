@@ -21,13 +21,13 @@ void setData(Node *elem, uint32_t id) {
 }
 
 inline bool isAdded(Node *elem) {
-    return elem == NULL ? true : find(elem)->added;
+    return elem == NULL ? true : elem->added;
 }
 
 void setAdded(Node *elem, bool state) {
     if (elem == NULL)
         return;
-    find(elem)->added = state;
+    elem->added = state; // TODO co jest???
 }
 
 Node *find(Node *elem) {
