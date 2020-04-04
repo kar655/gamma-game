@@ -484,7 +484,7 @@ uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
 
 //        printf("Output: %lu\n", output);
 //        printf("Test: %lu\n", test);
-
+        assert(output == test);
         return output;
     }
     else
@@ -494,7 +494,7 @@ uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
 
 bool gamma_golden_possible(gamma_t *g, uint32_t player) {
     DATACHECK(g); // 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
-    return false;
+//    return false;
     if (wrongInput(g, player) || !hasGoldenMoves(g, player))
         return false;
 

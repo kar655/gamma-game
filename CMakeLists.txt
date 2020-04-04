@@ -23,16 +23,16 @@ set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
 set(SOURCE_FILES
     src/gamma.c
     src/gamma.h
-#    src/main_to_tests.c
-#    src/gamma_test.c
-    # TODO zawsze w golden move po wykonaniu move
-    # to moze byc wina ze move to nie jest zwtykly move w golden move xd
 
-    # 3 i 4 nie dziala
-    # 3 na 143  // nie ma bijekcji AvlTree <-> area w 65/64
-    # 4 na 271 brak bijekcji juz w 25
-    # 5 przechodzi ale brak bijekcji w 145
-    testy_do_duzego/gbz/gbz3.c
+#    src/main_to_tests.c
+    src/gamma_test.c
+
+#    testy_do_duzego/gbz/gbz5.c
+#    GenerateTests.c
+#    generatedTests/goldenMoveTests/small1.c
+#    generatedTests/freeFieldsTests/chessboard.c
+#    generatedTests/randomTests/big1/KZ0.c
+
     src/findUnionLib/findUnion.c src/findUnionLib/findUnion.h
     src/playerLib/player.c src/playerLib/player.h
     src/Avl_Tree_lib/avl_tree.c src/Avl_Tree_lib/avl_tree.h)
