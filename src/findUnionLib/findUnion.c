@@ -1,4 +1,5 @@
 
+#include <assert.h>
 #include "findUnion.h"
 
 
@@ -21,13 +22,24 @@ void setData(Node *elem, uint32_t id) {
 }
 
 inline bool isAdded(Node *elem) {
-    return elem == NULL ? true : elem->added;
+    return elem->added;
+}
+
+// TODO spadnie z rowerka jak elem jest nullem
+inline bool isRootAdded(Node *elem) {
+    return find(elem)->added;
 }
 
 void setAdded(Node *elem, bool state) {
     if (elem == NULL)
         return;
-    elem->added = state; // TODO co jest???
+    elem->added = state;
+}
+
+void setRootAdded(Node *elem, bool state) {
+    if (elem == NULL)
+        return;
+    find(elem)->added = state;
 }
 
 Node *find(Node *elem) {
@@ -69,6 +81,13 @@ Node *merge(Node *a, Node *b) {
     }
 }
 
+void clearNodeData(Node *elem) {
+    if (elem == NULL)
+        return;
+
+    elem->parent = elem;
+    elem->rank = 0;
+}
 
 void removeNode(Node *elem) {
     free(elem);

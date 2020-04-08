@@ -24,10 +24,99 @@
 //    Node ***board;
 //};
 
+///** @brief Do quick check if golden move can be done.
+// *
+// * @param g - current game
+// * @param player - attacking player
+// * @param x - first coor
+// * @param y
+// * @return
+// */
+//static bool canGoldFastCheck(gamma_t *g, uint32_t player,
+//                             uint32_t x, uint32_t y);
+
+/** @brief Prepares data for golden move.
+ * Calls function to clear and prepare area for golden move
+ * @param g - current game
+ * @param attackedPlayer - Previous owner of field (@p x, @p y)
+ * @param x - first coordinate
+ * @param y - second coordinate
+ */
+static void goldenMovePrep(gamma_t *g, Member attackedPlayer,
+                           uint32_t x, uint32_t y);
+
+/** @brief Use gamma_move() on attacked field.
+ * Checks number of areas and calls gamma_move()
+ * @param g - current game
+ * @param attackedPlayer - Previous owner of field (@p x, @p y)
+ * @param player - id of attacking player
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return boolean if golden_move was performed
+ */
+static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
+                             uint32_t x, uint32_t y);
+
+
+// -----------------------------------------------------------------------------------------
+
+// TODO szybkie sprawdzenie czy atakujacy gracz (player) ma mniej pol lub sasiedzie?
+
+static bool canGoldFastCheck(gamma_t *g, uint32_t player,
+                             uint32_t x, uint32_t y) {
+
+    if (getPlayer(g, player)->areas == g->areas)
+        return numNeighbours(g, player, x, y) != 0;
+
+    return true;
+}
+
+static void goldenMovePrep(gamma_t *g, Member attackedPlayer,
+                           uint32_t x, uint32_t y) {
+    attackedPlayer->roots =
+            deleteNode(attackedPlayer->roots, find(g->board[x][y]));
+
+    // removes all connections between attackedPlayer's fields
+    clearRelations(g, g->board[x][y], attackedPlayer->id);
+
+    // change owner to 0
+    resetField(g, attackedPlayer->id, x, y);
+
+    getField(g, x, y)->added = false;
+
+    // builds attacked player's areas but not the middle
+    buildConnected(g, attackedPlayer->id, x, y);
+
+    attackedPlayer->areas +=
+            areasChange(g, attackedPlayer->id, x, y, false);
+}
+
+static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
+                             uint32_t x, uint32_t y) {
+    if (attackedPlayer->areas <= g->areas) {
+        // try to move
+        if (gamma_move(g, player, x, y)) {
+
+            // made golden_move
+            getPlayer(g, player)->goldenMoves++;
+            return true;
+        }
+        else { // cant move
+            // back to previous state
+            gamma_move(g, attackedPlayer->id, x, y);
+            return false;
+        }
+    }
+    else { // cant do this golden_move
+
+        gamma_move(g, attackedPlayer->id, x, y);
+        return false;
+    }
+}
 
 
 //-----------------------------------------------------------------------------
-// DONE
+
 gamma_t *gamma_new(uint32_t width, uint32_t height,
                    uint32_t players, uint32_t areas) {
     if (!positive(width) || !positive(height) || !positive(players))
@@ -35,9 +124,9 @@ gamma_t *gamma_new(uint32_t width, uint32_t height,
 
     gamma_t *game = malloc(sizeof(gamma_t));
     Member *members = malloc(sizeof(member) * players);
-
     Node ***board = (Node ***) malloc(width * sizeof(Node **));
-    if (board == NULL)
+
+    if (game == NULL || members == NULL || board == NULL)
         return NULL;
 
     for (unsigned int i = 0; i < width; i++) {
@@ -45,10 +134,8 @@ gamma_t *gamma_new(uint32_t width, uint32_t height,
         if (board[i] == NULL)
             return NULL;
     }
-    initBoard(board, width, height);
 
-    if (game == NULL || members == NULL)
-        return NULL;
+    initBoard(board, width, height);
 
     initMembers(members, players);
     *game = (gamma_t) {width, height, players, areas, 0,
@@ -58,7 +145,6 @@ gamma_t *gamma_new(uint32_t width, uint32_t height,
     return game;
 }
 
-// DONE
 void gamma_delete(gamma_t *g) {
     if (g == NULL)
         return;
@@ -66,6 +152,7 @@ void gamma_delete(gamma_t *g) {
     for (uint32_t x = 0; x < g->width; x++) {
         for (uint32_t y = 0; y < g->height; y++)
             free(g->board[x][y]);
+
         free(g->board[x]);
     }
     free(g->board);
@@ -77,7 +164,6 @@ void gamma_delete(gamma_t *g) {
 
     free(g);
 }
-
 
 bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     if (wrongInput(g, player) ||
@@ -110,95 +196,16 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
         !hasGoldenMoves(g, player))
         return false;
 
-    // TODO check czy nie rozspojnie gracza kotremu zabieram
-    // i tak musze zburzyc i tak???
     Member attackedPlayer = getPlayer(g, getOwner(g, x, y));
-    attackedPlayer->roots = deleteNode(attackedPlayer->roots,
-                                       find(g->board[x][y]));
-    // removes all connections between attackedPlayer's fields
-    clearRelations(g, g->board[x][y], attackedPlayer->id);
-    // tymczasowo zamieniam wlasciciela
-    g->available++;
-    attackedPlayer->owned--;
-    setData(g->board[x][y], 0);
-    g->board[x][y]->added = false;
 
-    // todo cos chyba bedzie nie tak z drzewem avl albo i nie
-    /// bo dodaje juz zmergowane czyi tak naprawde x i y beda pochodzic od roota
-
-    // jakies budowanie na nowo polaczen po 4 stronach
-    buildArea(g, getLeft(g, x, y), getLeft(g, x, y), attackedPlayer->id);
-    buildArea(g, getUp(g, x, y), getUp(g, x, y), attackedPlayer->id);
-    buildArea(g, getRight(g, x, y), getRight(g, x, y), attackedPlayer->id);
-    buildArea(g, getDown(g, x, y), getDown(g, x, y), attackedPlayer->id);
-
-    // tylko to zle ze merguje juz
-    uint32_t newAreas = areasChange(g, attackedPlayer->id, x, y, false);
-
-    // policzyc czy obszary beda sie zgadzac
-    // jesli tak to te 4 dodac do drzewa gracza i zwykly move
-    // jesli nie to dodac to pole "centralne"
-    // i mergeFields?
-
-    // TODO HERE !!!!!!!!!!!!!!!!!!!!!!!!!
-    attackedPlayer->areas += newAreas;
-    if (attackedPlayer->areas <= g->areas) {
-        // normalne przejecie chyba moze nawet na chama z gamma_move
-        // dla gracza player
-        if (gamma_move(g, player, x, y)) {
-            // gracz przejal pole normalnie
-            getPlayer(g, player)->goldenMoves++;
-            return true;
-        }
-        else {
-            // gracz nie moze przejac pola
-            // powrocic do stanu sprzed ataku
-            // usunac lewo prawo gora dol
-
-            gamma_move(g, attackedPlayer->id, x, y);
-//            attackedPlayer->areas -= newAreas - 1;
-
-            //
-            return false;
-        }
-    }
-    else { // cant do this golden_move
-        // tutaj tez normalne gamma_move ??
-        // tylko dla gracza attackedPlayer
-
-        gamma_move(g, attackedPlayer->id, x, y);
-//        attackedPlayer->areas -= newAreas - 1;
-
-        return false;
-    }
-
-    // areas of the previous owner will decrease by 1
-//    if (numNeighbours(g, getPlayer(g, x, y), x, y) == 0) {
-//        //todo usunac z tablicy rootow
-//    }
-//    else { //
-//
+//    todo
+//    if (!canGoldFastCheck(g, player, x, y)) {
+//        return false;
 //    }
 
-//    if (numNeighbours(g, player, x, y) == 0) {
-//        if (getAreas(g, player) == g->areas)
-//            return false;
-//
-//        g->available++;
-//        g->members[getOwner(g, x, y) - 1]->owned--;
-//
-//        takeField(g, player, x, y);
-//        g->members[player - 1]->areas++;
-//        // TODO poprawic obszary gracza ktory traci to pole
-//    }
-//    else {
-//        g->available++;
-//        getPlayer(g, getOwner(g, x, y))->owned--;
-//
-//        takeField(g, player, x, y);
-//    }
-//
-//    return true;
+    goldenMovePrep(g, attackedPlayer, x, y);
+
+    return goldenMoveFinish(g, attackedPlayer, player, x, y);
 }
 
 uint64_t gamma_busy_fields(gamma_t *g, uint32_t player) {
@@ -207,8 +214,6 @@ uint64_t gamma_busy_fields(gamma_t *g, uint32_t player) {
     else
         return getPlayer(g, player)->owned;
 }
-
-// todo utworzyc jakies gamma_helper_lib
 
 uint64_t dfs(gamma_t *g, Node *elem, uint32_t id, bool state) {
     if (elem == NULL)

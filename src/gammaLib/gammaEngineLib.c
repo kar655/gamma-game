@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "gammaEngineLib.h"
 
-inline Member getPlayer(gamma_t *g, uint32_t player);
+static void buildArea(gamma_t *g, Node *center, Node *elem, uint32_t id);
 
 inline bool positive(uint32_t num) {
     return num > 0;
@@ -11,6 +11,8 @@ inline bool positive(uint32_t num) {
 void initMembers(Member *members, uint32_t players) {
     for (unsigned int i = 0; i < players; i++) {
         members[i] = newMember(i + 1);
+        if (members[i] == NULL)
+            exit(1);
     }
 }
 
@@ -52,6 +54,10 @@ inline Member getPlayer(gamma_t *g, uint32_t player) {
     return g->members[player - 1];
 }
 
+inline Node *getField(gamma_t *g, uint32_t x, uint32_t y) {
+    return g->board[x][y];
+}
+
 inline bool isMine(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     return g->board[x][y]->owner == getPlayer(g, player)->id;
 }
@@ -70,8 +76,14 @@ inline AvlTree getPlayerRoots(gamma_t *g, uint32_t player) {
 
 void takeField(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     g->available--;
-    g->members[player - 1]->owned++;
-    setData(g->board[x][y], getPlayer(g, player)->id);
+    getPlayer(g, player)->owned++;
+    getField(g, x, y)->owner = getPlayer(g, player)->id;
+}
+
+void resetField(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
+    g->available++;
+    getPlayer(g, player)->owned--;
+    getField(g, x, y)->owner = 0;
 }
 
 inline uint32_t getOwner(gamma_t *g, uint32_t x, uint32_t y) {
@@ -100,21 +112,16 @@ void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *biggest) {
     for (int i = 0; i < 4; i++) {
         if (arr[i] != NULL && isMineNode(g, player, arr[i]) &&
             find(arr[i]) != biggest) {
-            getPlayer(g, player)->roots = deleteNode(getPlayerRoots(g, player),
-                                                     find(arr[i]));
-            // todo arr[i] czy find(arr[i])
+
+            getPlayer(g, player)->roots =
+                    deleteNode(getPlayer(g, player)->roots, find(arr[i]));
+
             merge(biggest, arr[i]);
         }
     }
-
-//    for (int i = 0; i < 4; i++) {
-//        if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
-//            merge(center, arr[i]);
-//        }
-//    }
 }
 
-// num of friendly fields
+
 uint32_t numNeighbours(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     uint32_t neighbours = 0;
 
@@ -123,65 +130,69 @@ uint32_t numNeighbours(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     neighbours += isMineNode(g, player, getUp(g, x, y));
     neighbours += isMineNode(g, player, getDown(g, x, y));
 
-
     return neighbours;
 }
 
-
-// jak zmieni sie ilosz obszarow gracza gdyby dolozyl pionek na x, y
-// o ile spadnie
-uint32_t areasChange(gamma_t *g, uint32_t player,
-        uint32_t x, uint32_t y, bool merged) {
-    // left up right down
-    Node *arr[4];
-
+void nearbyFields(gamma_t *g, Node *arr[], uint32_t x, uint32_t y) {
     arr[0] = getLeft(g, x, y);
     arr[1] = getUp(g, x, y);
     arr[2] = getRight(g, x, y);
     arr[3] = getDown(g, x, y);
+}
 
-    uint32_t output = 0;
-
+void mergeWithMiddle(gamma_t *g, uint32_t player, Node *arr[],
+                     uint32_t x, uint32_t y) {
     Node *biggest = NULL;
 
-    for (int i = 0; i < 4; i++) {
-        if (arr[i] != NULL && !isAdded(find(arr[i])) &&
-            isMineNode(g, player, arr[i])) {
-            setAdded(find(arr[i]), true);
-            output++;
+    for (int i = 0; i < 4; i++)
+        if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
+            setRootAdded(arr[i], false);
 
             if (biggest == NULL || biggest->rank < find(arr[i])->rank) {
                 biggest = find(arr[i]);
             }
         }
-    }
 
-    // todo tu setAdded powinno byc od ROOTa
-    // bo interesuje mnie ze caly obszar dodany a nie pojedyncze pole
 
-    // TODO ale tutaj nie wiem bo nie pamietac co to mialo robic
-    // albo juz jest OK XD
+    mergeFields(g, player, arr, biggest);
+    merge(biggest, getField(g, x, y));
+
+}
+
+void mergeNearbyFields(gamma_t *g, uint32_t player, Node *arr[]) {
     for (int i = 0; i < 4; i++)
         if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
-            setAdded(find(arr[i]), false);
-            if (!merged)
-                insert(&getPlayer(g, player)->roots, find(arr[i]));
+            setRootAdded(arr[i], false);
+            insert(&getPlayer(g, player)->roots, find(arr[i]));
         }
+}
+
+// jak zmieni sie ilosz obszarow gracza gdyby dolozyl pionek na x, y
+// o ile spadnie
+uint32_t areasChange(gamma_t *g, uint32_t player,
+                     uint32_t x, uint32_t y, bool middle) {
+    // nearby fields
+    Node *arr[4];
+    nearbyFields(g, arr, x, y);
+
+    uint32_t output = 0;
 
 
-    if (merged) {
-        // insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
-        mergeFields(g, player, arr, biggest);
-        merge(biggest, g->board[x][y]);
+    for (int i = 0; i < 4; i++) {
+        if (arr[i] != NULL && !isRootAdded(arr[i]) &&
+            isMineNode(g, player, arr[i])) {
+
+            setRootAdded(arr[i], true);
+            output++;
+        }
     }
-//    else {
-//        insert(&getPlayer(g, player)->roots, find());
-//        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
-//        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
-//        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
-//    }
+    if (middle)
+        mergeWithMiddle(g, player, arr, x, y);
+    else
+        mergeNearbyFields(g, player, arr);
 
 
+    // todo remove this assert
     assert(output <= 4);
     return output - 1;
 }
@@ -190,8 +201,7 @@ void clearRelations(gamma_t *g, Node *elem, uint32_t id) {
     if (elem == NULL)
         return;
     if (!elem->added && elem->owner == id) {
-        elem->parent = elem;
-        elem->rank = 0;
+        clearNodeData(elem);
         elem->added = true;
 
         clearRelations(g, getLeft(g, elem->x, elem->y), id);
@@ -201,6 +211,7 @@ void clearRelations(gamma_t *g, Node *elem, uint32_t id) {
     }
 }
 
+// todo
 void buildArea(gamma_t *g, Node *center, Node *elem, uint32_t id) {
     if (elem == NULL)
         return;
@@ -214,4 +225,11 @@ void buildArea(gamma_t *g, Node *center, Node *elem, uint32_t id) {
         buildArea(g, center, getRight(g, elem->x, elem->y), id);
         buildArea(g, center, getDown(g, elem->x, elem->y), id);
     }
+}
+
+void buildConnected(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
+    buildArea(g, getLeft(g, x, y), getLeft(g, x, y), player);
+    buildArea(g, getUp(g, x, y), getUp(g, x, y), player);
+    buildArea(g, getRight(g, x, y), getRight(g, x, y), player);
+    buildArea(g, getDown(g, x, y), getDown(g, x, y), player);
 }

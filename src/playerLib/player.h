@@ -1,4 +1,8 @@
-
+/** @file
+ * Interface of class Player
+ *
+ * @author Karol Zagródka <karol.zagrodka@gmail.com>
+ */
 
 #ifndef GAMMA_PLAYER_H
 #define GAMMA_PLAYER_H
@@ -23,10 +27,20 @@ struct member {
 
 
 typedef struct member member;
+
 typedef member *Member;
 
+/** @brief Creates new Member
+ * Creates new member with id = @p id
+ * @param id - new member's id
+ * @return pointer to new Member
+ */
 Member newMember(uint32_t id);
 
+/** @brief Removes Member
+ * Removes Member and clears memory
+ * @param player - Member to be removed
+ */
 void removeMember(Member player);
 
 //void addRoot(Member player, Node *elem);
