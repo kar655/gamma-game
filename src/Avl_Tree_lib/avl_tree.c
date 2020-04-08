@@ -263,24 +263,6 @@ AvlTree deleteNode(AvlTree tree, Node *field) {
 }
 
 
-bool exists(AvlTree tree, Node *field) {
-    if (tree == NULL)
-        return false;
-
-    if (tree->data == field)
-        return true;
-
-    int comparison = compareNodes(tree, field);
-
-    if (comparison < 0)
-        return exists(tree->right, field);
-    else if (comparison > 0)
-        return exists(tree->left, field);
-    else
-        assert(false);
-}
-
-
 void removeAll(AvlTree tree) {
     if (tree != NULL) {
         removeAll(tree->left);
