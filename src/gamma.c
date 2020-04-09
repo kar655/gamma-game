@@ -62,19 +62,23 @@ static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
 
 // TODO szybkie sprawdzenie czy atakujacy gracz (player) ma mniej pol lub sasiedzie?
 
-static bool canGoldFastCheck(gamma_t *g, uint32_t player,
-                             uint32_t x, uint32_t y) {
+//static bool canGoldFastCheck(gamma_t *g, uint32_t player,
+//                             uint32_t x, uint32_t y) {
+//
+//    if (getPlayer(g, player)->areas == g->areas)
+//        return numNeighbours(g, player, x, y) != 0;
+//
+//    return true;
+//}
 
-    if (getPlayer(g, player)->areas == g->areas)
-        return numNeighbours(g, player, x, y) != 0;
-
-    return true;
-}
+//static uint32_t
 
 static void goldenMovePrep(gamma_t *g, Member attackedPlayer,
                            uint32_t x, uint32_t y) {
     attackedPlayer->roots =
             deleteNode(attackedPlayer->roots, find(g->board[x][y]));
+
+    attackedPlayer->surrounding -= numEmpty(g, attackedPlayer->id, x, y);
 
     // removes all connections between attackedPlayer's fields
     clearRelations(g, g->board[x][y], attackedPlayer->id);
@@ -89,6 +93,8 @@ static void goldenMovePrep(gamma_t *g, Member attackedPlayer,
 
     attackedPlayer->areas +=
             areasChange(g, attackedPlayer->id, x, y, false);
+
+    moveOnEmpty(g, 21321321, x, y, false);
 }
 
 static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
@@ -187,6 +193,8 @@ bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
         getPlayer(g, player)->areas -= areasChange(g, player, x, y, true);
     }
 
+    getPlayer(g, player)->surrounding += numEmpty(g, player, x, y);
+    moveOnEmpty(g, player, x, y, true);
     return true;
 }
 
@@ -197,6 +205,8 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
         return false;
 
     Member attackedPlayer = getPlayer(g, getOwner(g, x, y));
+
+
 
 //    todo
 //    if (!canGoldFastCheck(g, player, x, y)) {
@@ -251,21 +261,21 @@ uint64_t iterate(gamma_t *g, AvlTree tree, uint32_t id, bool state) {
 
 }
 
-// DONE
 uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
 
     if (wrongInput(g, player))
         return 0;
     else if (getAreas(g, player) == g->areas) {
 
-        uint64_t output = iterate(g, getPlayer(g, player)->roots,
-                                  getPlayer(g, player)->id, true);
-        uint64_t test = iterate(g, getPlayer(g, player)->roots,
-                                getPlayer(g, player)->id, false);
-
-
-        assert(output == test);
-        return output;
+//        uint64_t output = iterate(g, getPlayer(g, player)->roots,
+//                                  getPlayer(g, player)->id, true);
+//        uint64_t test = iterate(g, getPlayer(g, player)->roots,
+//                                getPlayer(g, player)->id, false);
+//
+//
+//        assert(output == test);
+//        return output;
+        return getPlayer(g, player)->surrounding;
     }
     else
         return g->available;

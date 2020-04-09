@@ -23,6 +23,8 @@ struct member {
     // array of roots of areas
     uint32_t size;
     AvlTree roots;
+    uint64_t surrounding;
+    bool changedSurrounding;
 };
 
 

@@ -7,7 +7,7 @@ Member newMember(uint32_t id) {
     Member output = malloc(sizeof(member));
     if (output == NULL)
         exit(1);
-    *output = (member) {id, 0, 0, 0, 0, NULL};
+    *output = (member) {id, 0, 0, 0, 0, NULL, 0, false};
 
     return output;
 }

@@ -112,6 +112,10 @@ Node *getRight(gamma_t *g, uint32_t x, uint32_t y);
  */
 void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *biggest);
 
+uint32_t moveOnEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y, bool sub);
+
+uint32_t numEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
+
 /** @brief Returns number of friendly fields connected to certain field.
  * Calculates number of fields owned by @p player and connected to field at
  * coordinates (@p x, @p y).

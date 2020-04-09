@@ -1,5 +1,4 @@
 
-#include <assert.h>
 #include "gammaEngineLib.h"
 
 static void buildArea(gamma_t *g, Node *center, Node *elem, uint32_t id);
@@ -41,6 +40,13 @@ inline bool isEmpty(gamma_t *g, uint32_t x, uint32_t y) {
 
 inline bool hasGoldenMoves(gamma_t *g, uint32_t player) {
     return getPlayer(g, player)->goldenMoves < g->numGoldenMoves;
+}
+
+bool isEmptyNode(Node *elem) {
+    if (elem == NULL)
+        return false;
+    else
+        return elem->owner == 0;
 }
 
 bool isMineNode(gamma_t *g, uint32_t player, Node *elem) {
@@ -90,7 +96,6 @@ inline uint32_t getOwner(gamma_t *g, uint32_t x, uint32_t y) {
     return g->board[x][y]->owner;
 }
 
-
 inline Node *getDown(gamma_t *g, uint32_t x, uint32_t y) {
     return y == 0 ? NULL : g->board[x][y - 1];
 }
@@ -121,6 +126,125 @@ void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *biggest) {
     }
 }
 
+bool inArray(uint32_t player, uint32_t arr[]) {
+    for (uint32_t i = 0; i < 4; i++)
+        if (arr[i] == player)
+            return true;
+
+    return false;
+}
+
+//uint32_t correctSurrounding(gamma_t *g, Node *current, uint32_t player,
+//                        uint32_t x, uint32_t y) {
+//    if (isEmptyNode(current))
+//        return numNeighbours(g, player, x, y) != 1;
+//    else if (!inArray(getOwner(g, x - 1, y), arr)) {
+//        getPlayer(g, getOwner(g, x - 1, y))->surrounding--;
+//        arr[i++] = getOwner(g, x - 1, y);
+//    }
+//}
+
+uint32_t moveOnEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y, bool sub) {
+
+    uint32_t empty = 0;
+    int change = sub ? -1 : 1;
+
+    uint32_t arr[4] = {0};
+    uint32_t i = 0;
+//    uint32_t newX[4] = {x - 1, x, x + 1, x};
+//    uint32_t newY[4] = {y, y + 1, y, y - 1};
+
+    // musze zmniejszyc surrounding innnym gracza ktorzy sasiadowali z tym polem
+    // ale pamietac ktorym zmniejszylem zeby kazdemu dokladnie raz
+
+    Node *current = getLeft(g, x, y);
+    if (current != NULL) {
+//        if (isEmptyNode(current))
+//            empty += numNeighbours(g, player, x - 1, y) == 1;
+//        else
+        if (!isEmptyNode(current) && !inArray(getOwner(g, x - 1, y), arr)) {
+            getPlayer(g, getOwner(g, x - 1, y))->surrounding += change;
+            arr[i++] = getOwner(g, x - 1, y);
+        }
+    }
+
+    current = getUp(g, x, y);
+    if (current != NULL) {
+//        if (isEmptyNode(current))
+//            empty += numNeighbours(g, player, x, y + 1) == 1;
+//        else
+        if (!isEmptyNode(current) && !inArray(getOwner(g, x, y + 1), arr)) {
+            getPlayer(g, getOwner(g, x, y + 1))->surrounding += change;
+            arr[i++] = getOwner(g, x, y + 1);
+        }
+    }
+
+    current = getRight(g, x, y);
+    if (current != NULL) {
+//        if (isEmptyNode(current))
+//            empty += numNeighbours(g, player, x + 1, y) == 1;
+//        else
+        if (!isEmptyNode(current) && !inArray(getOwner(g, x + 1, y), arr)) {
+            getPlayer(g, getOwner(g, x + 1, y))->surrounding += change;
+            arr[i++] = getOwner(g, x + 1, y);
+        }
+    }
+
+
+    current = getDown(g, x, y);
+    if (current != NULL) {
+//        if (isEmptyNode(current))
+//            empty += numNeighbours(g, player, x, y - 1) == 1;
+//        else
+        if (!isEmptyNode(current) && !inArray(getOwner(g, x, y - 1), arr)) {
+            getPlayer(g, getOwner(g, x, y - 1))->surrounding += change;
+            arr[i++] = getOwner(g, x, y - 1);
+        }
+    }
+
+
+//    if (isEmptyNode(getLeft(g, x, y)))
+//        empty += numNeighbours(g, player, x - 1, y) != 1;
+//    if (isEmptyNode(getUp(g, x, y)))
+//        empty += numNeighbours(g, player, x, y + 1) != 1;
+//    if (isEmptyNode(getRight(g, x, y)))
+//        empty += numNeighbours(g, player, x + 1, y) != 1;
+//    if (isEmptyNode(getDown(g, x, y)))
+//        empty += numNeighbours(g, player, x, y - 1) != 1;
+
+    return empty;
+}
+
+uint32_t numEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
+    uint32_t empty = 0;
+
+    Node *current = getLeft(g, x, y);
+    if (current != NULL) {
+        if (isEmptyNode(current))
+            empty += numNeighbours(g, player, x - 1, y) == 1;
+    }
+
+    current = getUp(g, x, y);
+    if (current != NULL) {
+        if (isEmptyNode(current))
+            empty += numNeighbours(g, player, x, y + 1) == 1;
+    }
+
+    current = getRight(g, x, y);
+    if (current != NULL) {
+        if (isEmptyNode(current))
+            empty += numNeighbours(g, player, x + 1, y) == 1;
+    }
+
+
+    current = getDown(g, x, y);
+    if (current != NULL) {
+        if (isEmptyNode(current))
+            empty += numNeighbours(g, player, x, y - 1) == 1;
+    }
+
+    return empty;
+}
 
 uint32_t numNeighbours(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     uint32_t neighbours = 0;
@@ -156,7 +280,6 @@ void mergeWithMiddle(gamma_t *g, uint32_t player, Node *arr[],
 
     mergeFields(g, player, arr, biggest);
     merge(biggest, getField(g, x, y));
-
 }
 
 void mergeNearbyFields(gamma_t *g, uint32_t player, Node *arr[]) {
@@ -171,12 +294,10 @@ void mergeNearbyFields(gamma_t *g, uint32_t player, Node *arr[]) {
 // o ile spadnie
 uint32_t areasChange(gamma_t *g, uint32_t player,
                      uint32_t x, uint32_t y, bool middle) {
-    // nearby fields
-    Node *arr[4];
-    nearbyFields(g, arr, x, y);
 
     uint32_t output = 0;
-
+    Node *arr[4]; // nearby fields
+    nearbyFields(g, arr, x, y);
 
     for (int i = 0; i < 4; i++) {
         if (arr[i] != NULL && !isRootAdded(arr[i]) &&
@@ -186,14 +307,12 @@ uint32_t areasChange(gamma_t *g, uint32_t player,
             output++;
         }
     }
+
     if (middle)
         mergeWithMiddle(g, player, arr, x, y);
     else
         mergeNearbyFields(g, player, arr);
 
-
-    // todo remove this assert
-    assert(output <= 4);
     return output - 1;
 }
 
