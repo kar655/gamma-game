@@ -40,6 +40,8 @@ static const char board[] =
 int main() {
   gamma_t *g;
 
+//  printf("XDDDDDDD moje %lu\n", strlen("\n"));
+
   g = gamma_new(0, 0, 0, 0);
   assert(g == NULL);
 
@@ -91,11 +93,12 @@ int main() {
   assert(gamma_busy_fields(g, 2) == 4);
   assert(gamma_free_fields(g, 2) == 10);
 //
-//  char *p = gamma_board(g);
-//  assert(p);
-//  assert(strcmp(p, board) == 0);
+  char *p = gamma_board(g);
 //  printf(p);
-//  free(p);
+  assert(p);
+  assert(strcmp(p, board) == 0);
+  printf(p);
+  free(p);
 
   gamma_delete(g);
   return 0;

@@ -292,34 +292,43 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player) {
 }
 
 char *gamma_board(gamma_t *g) {
-    return NULL;
-//    if (g == NULL)
-//        return NULL;
-//
-//    // uint32_t maxId = g->members[g->players - 1]->id;
-//    uint32_t line = g->width * 1;
-//    char *output = (char *) malloc(sizeof(char) * g->height * g->width * 1);
-//    if (output == NULL)
-//        return NULL;
-//
-//    for (uint32_t y = 0; y < g->height; y++) {
-//        for (uint32_t x = 0; x < g->width; x++) {
-//            // itoa (i,buffer,10);
-//            if (g->board[x][y] == 0) { // add '.'
-//                strcat(output + line * y + x, ".");
-//            }
-//            else {
-//                // na inta
-//                char *helper = malloc(sizeof(char) * g->width * 1);
-//                strcpy(helper, output + line * y);
-//
-//                sprintf(output + line * y, "%s%d", helper, g->board[x][y]);
-//                free(helper);
-////                strcat(output + line * y + x, str);
-//            }
-//        }
-//        strcat(output + y * line + g->width, "\n");
-//    }
-//
-//    return output;
+//    return NULL;
+    if (g == NULL)
+        return NULL;
+
+    uint32_t maxId = g->members[g->players - 1]->id;
+    if (maxId >= 10) {
+        printf("XDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDd\n");
+        exit(2137);
+    }
+
+    char integer_string[32] = "";
+
+
+    uint32_t line = g->width * 1;
+    size_t length = 0;
+    size_t maxLength = sizeof(char) * 1 * g->height *
+                       (g->width + 1) + 1 * sizeof(char);
+    char *output = (char *) malloc(maxLength);
+
+    if (output == NULL) {
+        return NULL;
+    }
+
+    output[maxLength - 1] = '\0';
+
+    for (uint32_t y = g->height; y-- > 0;) { // to prevent uint32_t flip
+        for (uint32_t x = 0; x < g->width; x++) {
+            if (isEmpty(g, x, y)) {
+                memcpy(output + length++, ".",1);
+            }
+            else {
+                sprintf(integer_string, "%d", getOwner(g, x, y));
+                memcpy(output + length++, integer_string, 1);
+            }
+        }
+        memcpy(output + length++, "\n", 1);
+    }
+
+    return output;
 }
