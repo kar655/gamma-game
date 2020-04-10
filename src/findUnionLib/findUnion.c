@@ -1,3 +1,9 @@
+/** @file
+ * Implementation of Find and Union
+ *
+ * @author Karol Zagródka <karol.zagrodka@gmail.com>
+ */
+
 
 #include <assert.h>
 #include "findUnion.h"

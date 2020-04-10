@@ -13,18 +13,21 @@
 #include "../findUnionLib/findUnion.h"
 #include "../Avl_Tree_lib/avl_tree.h"
 
-
+/** @brief Player structure.
+ *
+ * Remembers player's basic information.
+ */
 struct member {
-    uint32_t id;
-    uint32_t areas;
+    uint32_t id;                /**< Player's id */
+    uint32_t areas;             /**< Number of owned areas */
 
-    uint64_t owned;
-    uint32_t goldenMoves;
-    // array of roots of areas
+    uint64_t owned;             /**< Number of owned fields */
+    uint32_t goldenMoves;       /**< Used golden moves */
+
     uint32_t size;
-    AvlTree roots;
-    uint64_t surrounding;
-    bool changedSurrounding;
+    AvlTree roots;              /**< todo */
+    uint64_t surrounding;       /**< Number of empty fields surrounding*/
+    bool changedSurrounding;    /**< todo*/
 };
 
 

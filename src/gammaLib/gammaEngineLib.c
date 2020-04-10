@@ -118,8 +118,8 @@ void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *biggest) {
         if (arr[i] != NULL && isMineNode(g, player, arr[i]) &&
             find(arr[i]) != biggest) {
 
-            getPlayer(g, player)->roots =
-                    deleteNode(getPlayer(g, player)->roots, find(arr[i]));
+//            getPlayer(g, player)->roots =
+//                    deleteNode(getPlayer(g, player)->roots, find(arr[i]));
 
             merge(biggest, arr[i]);
         }
@@ -144,7 +144,7 @@ bool inArray(uint32_t player, uint32_t arr[]) {
 //    }
 //}
 
-uint32_t moveOnEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y, bool sub) {
+uint32_t moveOnEmpty(gamma_t *g, uint32_t x, uint32_t y, bool sub) {
 
     uint32_t empty = 0;
     int change = sub ? -1 : 1;
@@ -286,7 +286,7 @@ void mergeNearbyFields(gamma_t *g, uint32_t player, Node *arr[]) {
     for (int i = 0; i < 4; i++)
         if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
             setRootAdded(arr[i], false);
-            insert(&getPlayer(g, player)->roots, find(arr[i]));
+//            insert(&getPlayer(g, player)->roots, find(arr[i]));
         }
 }
 

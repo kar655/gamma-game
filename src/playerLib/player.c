@@ -1,4 +1,8 @@
-
+/** @file
+ * Implementation of class Player
+ *
+ * @author Karol Zagródka <karol.zagrodka@gmail.com>
+ */
 
 #include "player.h"
 
@@ -18,9 +22,8 @@ void removeMember(Member player) {
 //    }
 
 //    free(player->roots);
-    removeAll(player->roots);
+    // removeAll(player->roots);
     free(player);
-    player = NULL;
 }
 
 //void addRoot(Member player, Node *elem) {

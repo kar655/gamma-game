@@ -1,5 +1,5 @@
 /** @file
- * Interface of class Player
+ * Interface of Find and Union
  *
  * @author Karol Zagródka <karol.zagrodka@gmail.com>
  */
@@ -14,15 +14,20 @@
 
 typedef struct Node Node;
 
+/** @brief Structure that holds field data.
+ *
+ * Able to perform find and union.
+ */
 struct Node {
-    uint32_t x, y;
+    uint32_t x,             /**< First coordinate */
+    y;                      /**< Second coordinate */
 
-    bool added;
-    uint32_t currentReset;
-    uint32_t owner;
-    uint32_t rank;
+    bool added;             /**< State of Node */
+    uint32_t currentReset;  /**< Reset counter */
+    uint32_t owner;         /**< Id of owner */
+    uint32_t rank;          /**< Number of sub-Nodes */
 
-    Node *parent;
+    Node *parent;           /**< Parent Node */
 };
 
 /** @brief Creates new root.
@@ -69,6 +74,11 @@ bool sameRoot(Node *a, Node *b);
  */
 Node *merge(Node *a, Node *b);
 
+/** @brief Clears temporary data.
+ * Removes connection with other Nodes
+ *
+ * @param elem - Node to clear data
+ */
 void clearNodeData(Node *elem);
 
 void removeNode(Node *elem);

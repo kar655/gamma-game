@@ -11,21 +11,24 @@
 #include "../Avl_Tree_lib/avl_tree.h"
 //#include "../gamma.h"
 
+/** @brief Structure that holds gama data.
+ *
+ *
+ */
 struct gamma {
-    uint32_t width;
-    uint32_t height;
-    uint32_t players;
-    uint32_t areas;
+    uint32_t width;             /**< Game width */
+    uint32_t height;            /**< Game height */
+    uint32_t players;           /**< Number of players */
+    uint32_t areas;             /**< Maximal number of areas */
 
-    uint32_t resetCounter;
-    uint32_t numGoldenMoves;
-    uint64_t available;
-    Member *members;
-    Node ***board;
+    uint32_t resetCounter;      /**< XD */
+    uint32_t numGoldenMoves;    /**< Maximal number of golden moves */
+    uint64_t available;         /**< Number of empty fields */
+    Member *members;            /**< Array of players */
+    Node ***board;              /**< 2D Array of fields */
 };
 
 typedef struct gamma gamma_t;
-
 
 bool positive(uint32_t num);
 
@@ -36,24 +39,71 @@ bool positive(uint32_t num);
  */
 void initMembers(Member *members, uint32_t players);
 
+/** @brief Initialize game board.
+ * Allocates memory for all fields
+ * @param board - allocated memory for new board
+ * @param width - board width
+ * @param height - board height
+ */
 void initBoard(Node ***board, uint32_t width, uint32_t height);
 
 Member getPlayer(gamma_t *g, uint32_t player);
 
 Node *getField(gamma_t *g, uint32_t x, uint32_t y);
 
+/** @brief Check input data.
+ * Check if @p g is not NULL and if @p player exists.
+ * @param g - current game
+ * @param player - player id
+ * @return true if data is correct else false
+ */
 bool wrongInput(gamma_t *g, uint32_t player);
 
+/** @brief Check coordinates.
+ * Check if @p g contains field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return true if data is correct else false
+ */
 bool wrongCoordinates(gamma_t *g, uint32_t x, uint32_t y);
 
+/** @brief Check if field is empty.
+ * Check if field (@p x, @p y) doesn't have owner
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return
+ */
 bool isEmpty(gamma_t *g, uint32_t x, uint32_t y);
 
+/** @brief Check if player has golden move.
+ * Check if @p player has golden move.
+ * @param g - current game
+ * @param player - Member's id
+ * @return
+ */
 bool hasGoldenMoves(gamma_t *g, uint32_t player);
 
+/** @brief Checks if player owns field.
+ * Checks if @p player owns @p elem.
+ * @param g - current game
+ * @param player - Member's id
+ * @param elem - field
+ * @return true if @p elem is not NULL and player owns field else false
+ */
 bool isMineNode(gamma_t *g, uint32_t player, Node *elem);
 
 Member getPlayer(gamma_t *g, uint32_t player);
 
+/** @brief Check if player owns field.
+ * Check if @p player owns field at (@p x, @p y)
+ * @param g - current game
+ * @param player - Member's id
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return true if player owns field else false
+ */
 bool isMine(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
 
 bool isEnemy(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
@@ -95,12 +145,40 @@ void resetField(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
  */
 uint32_t getOwner(gamma_t *g, uint32_t x, uint32_t y);
 
+/** @brief Give bottom field.
+ * Give bottom field of field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return bottom field or NULL.
+ */
 Node *getDown(gamma_t *g, uint32_t x, uint32_t y);
 
+/** @brief Give upper field.
+ * Give upper field of field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return upper field or NULL.
+ */
 Node *getUp(gamma_t *g, uint32_t x, uint32_t y);
 
+/** @brief Give left field.
+ * Give left field of field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return left field or NULL.
+ */
 Node *getLeft(gamma_t *g, uint32_t x, uint32_t y);
 
+/** @brief Give right field.
+ * Give right field of field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return right field or NULL.
+ */
 Node *getRight(gamma_t *g, uint32_t x, uint32_t y);
 
 /** @brief Merges fields.
@@ -112,7 +190,7 @@ Node *getRight(gamma_t *g, uint32_t x, uint32_t y);
  */
 void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *biggest);
 
-uint32_t moveOnEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y, bool sub);
+uint32_t moveOnEmpty(gamma_t *g, uint32_t x, uint32_t y, bool sub);
 
 uint32_t numEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
 
@@ -148,7 +226,6 @@ uint32_t areasChange(gamma_t *g, uint32_t player,
  */
 void clearRelations(gamma_t *g, Node *elem, uint32_t id);
 
-
 /** @brief Build areas on nearby fields.
  * Build areas nearby field (@p x, @p y) owned by Member's id @p player
  * @param g - current game
@@ -157,7 +234,6 @@ void clearRelations(gamma_t *g, Node *elem, uint32_t id);
  * @param y - second coordinate
  */
 void buildConnected(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
-
 
 
 #endif //GAMMA_GAMMAENGINELIB_H
