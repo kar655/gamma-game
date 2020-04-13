@@ -24,7 +24,7 @@ typedef struct gamma gamma_t;
  * @param[in] height  – wysokość planszy, liczba dodatnia,
  * @param[in] players – liczba graczy, liczba dodatnia,
  * @param[in] areas   – maksymalna liczba obszarów,
- *                      jakie może zająć jeden gracz.
+ *                      jakie może zająć jeden gracz, liczba dodatnia.
  * @return Wskaźnik na utworzoną strukturę lub NULL, gdy nie udało się
  * zaalokować pamięci lub któryś z parametrów jest niepoprawny.
  */
