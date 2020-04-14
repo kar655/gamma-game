@@ -27,7 +27,7 @@ struct member {
     uint32_t size;
     AvlTree roots;              /**< todo */
     uint64_t surrounding;       /**< Number of empty fields surrounding*/
-    bool changedSurrounding;    /**< todo*/
+    bool changedSurrounding;    /**< todo */
 };
 
 

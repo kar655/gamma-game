@@ -7,30 +7,14 @@
 
 #include "gammaLib/gammaEngineLib.h"
 #include "gamma.h"
-//#include "findUnionLib/findUnion.h"
-//#include "playerLib/player.h"
+#include "playerLib/player.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
-#include <math.h>
 
 
 #define NUM_GOLDEN_MOVES 1
-
-//struct gamma {
-//    uint32_t width;
-//    uint32_t height;
-//    uint32_t players;
-//    uint32_t areas;
-//
-//    uint32_t resetCounter;
-//    uint32_t numGoldenMoves;
-//    uint64_t available;
-//    Member *members;
-//    Node ***board;
-//};
 
 /** @brief Do quick check if golden move can be done.
  *  Checks if attacking player has maximal amount of areas and doesn't have
@@ -87,8 +71,6 @@ static bool canGoldFastCheck(gamma_t *g, uint32_t player,
 
 static void goldenMovePrep(gamma_t *g, Member attackedPlayer,
                            uint32_t x, uint32_t y) {
-//    attackedPlayer->roots =
-//            deleteNode(attackedPlayer->roots, find(g->board[x][y]));
 
     attackedPlayer->surrounding -= numEmpty(g, attackedPlayer->id, x, y);
 
@@ -139,14 +121,17 @@ static void boardBuilder(gamma_t *g, char *output) {
     for (uint32_t y = g->height; y-- > 0;) { // to prevent uint32_t flip
         for (uint32_t x = 0; x < g->width; x++) {
             if (isEmpty(g, x, y)) {
-                memcpy(output + length++, ".", 1);
+//                memcpy(output + length++, ".", 1);
+                output[length++] = '.';
             }
             else {
                 sprintf(integer_string, "%d", getOwner(g, x, y));
-                memcpy(output + length++, integer_string, 1);
+                output[length++] = integer_string[0];
+//                memcpy(output + length++, integer_string, 1);
             }
         }
-        memcpy(output + length++, "\n", 1);
+//        memcpy(output + length++, "\n", 1);
+        output[length++] = '\n';
     }
 }
 
@@ -214,7 +199,6 @@ bool gamma_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
 
         takeField(g, player, x, y);
         getPlayer(g, player)->areas++;
-//        insert(&getPlayer(g, player)->roots, find(g->board[x][y]));
 
     }
     else {
@@ -235,9 +219,8 @@ bool gamma_golden_move(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
 
     Member attackedPlayer = getPlayer(g, getOwner(g, x, y));
 
-    if (!canGoldFastCheck(g, player, x, y)) {
+    if (!canGoldFastCheck(g, player, x, y))
         return false;
-    }
 
     goldenMovePrep(g, attackedPlayer, x, y);
 
@@ -251,58 +234,12 @@ uint64_t gamma_busy_fields(gamma_t *g, uint32_t player) {
         return getPlayer(g, player)->owned;
 }
 
-//uint64_t dfs(gamma_t *g, Node *elem, uint32_t id, bool state) {
-//    if (elem == NULL)
-//        return 0;
-//
-//    uint64_t output = 0;
-//    // empty
-//    if (elem->added != state && elem->owner == 0) {
-//        elem->added = state;
-//        output++;
-//    }   // is mine
-//    else if (elem->added != state && elem->owner == id) {
-//        elem->added = state;
-//        output += dfs(g, getLeft(g, elem->x, elem->y), id, state);
-//        output += dfs(g, getUp(g, elem->x, elem->y), id, state);
-//        output += dfs(g, getRight(g, elem->x, elem->y), id, state);
-//        output += dfs(g, getDown(g, elem->x, elem->y), id, state);
-//    }
-//
-//    return output;
-//}
-
-//uint64_t iterate(gamma_t *g, AvlTree tree, uint32_t id, bool state) {
-//    if (tree == NULL)
-//        return 0;
-//
-//    uint64_t output = 0;
-//
-//
-//    output += dfs(g, tree->data, id, state);
-//    output += iterate(g, tree->left, id, state);
-//    output += iterate(g, tree->right, id, state);
-//
-//    return output;
-//
-//}
-
 uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
 
     if (wrongInput(g, player))
         return 0;
-    else if (getAreas(g, player) == g->areas) {
-
-//        uint64_t output = iterate(g, getPlayer(g, player)->roots,
-//                                  getPlayer(g, player)->id, true);
-//        uint64_t test = iterate(g, getPlayer(g, player)->roots,
-//                                getPlayer(g, player)->id, false);
-//
-//
-//        assert(output == test);
-//        return output;
+    else if (getAreas(g, player) == g->areas)
         return getPlayer(g, player)->surrounding;
-    }
     else
         return g->available;
 

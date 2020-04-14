@@ -19,18 +19,19 @@ set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
 # set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
 # set(CMAKE_C_FLAGS_DEBUG "-g")
 
+
+#set(TEST_FILE
+#    src/gamma_test.c
+##    ../TESTY/ipp-2020-testy/z2/jm/random/669728508.c
+#        )
+
+
 # Wskazujemy pliki źródłowe.
 set(SOURCE_FILES
-#    src/main_to_tests.c
+
 #    src/gamma_test.c
-#    gbz1.c
-#    testy_do_duzego/jm/test_golden_possible.c
+
     ${TEST_FILE}
-#    testy_do_duzego/gbz/gbz4.c
-#    GenerateTests.c
-#    generatedTests/goldenMoveTests/small1.c
-#    generatedTests/freeFieldsTests/chessboard.c
-#    generatedTests/randomTests/big1/KZ0.c
 
     src/findUnionLib/findUnion.c src/findUnionLib/findUnion.h
     src/playerLib/player.c src/playerLib/player.h
