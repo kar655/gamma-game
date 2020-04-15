@@ -4,7 +4,6 @@
  * @author Karol Zagródka <karol.zagrodka@gmail.com>
  */
 
-
 #include "gammaLib/gammaEngineLib.h"
 #include "gamma.h"
 #include "playerLib/player.h"
@@ -50,15 +49,16 @@ static void goldenMovePrep(gamma_t *g, Member attackedPlayer,
 static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
                              uint32_t x, uint32_t y);
 
-/** @brief Builds board of game @p g in @p output.
- * Empty place is '.' taken is owner's id
- * @param g - current game
- * @param output - pointer to allocated memory of board size
- */
-static void boardBuilder(gamma_t *g, char *output);
+// /** @brief Builds board of game @p g in @p output.
+// * Empty place is '.' taken is owner's id
+// * @param g - current game
+// * @param output - pointer to allocated memory of board size
+// * @param maxLength - size of allocated memory
+// */
+//static void boardBuilder(gamma_t *g, char **output, size_t maxLength);
 
 
-// -----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 static bool canGoldFastCheck(gamma_t *g, uint32_t player,
                              uint32_t x, uint32_t y) {
@@ -114,26 +114,38 @@ static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
     }
 }
 
-static void boardBuilder(gamma_t *g, char *output) {
-    size_t length = 0;
-    char integer_string[32] = "";
-
-    for (uint32_t y = g->height; y-- > 0;) { // to prevent uint32_t flip
-        for (uint32_t x = 0; x < g->width; x++) {
-            if (isEmpty(g, x, y)) {
-//                memcpy(output + length++, ".", 1);
-                output[length++] = '.';
-            }
-            else {
-                sprintf(integer_string, "%d", getOwner(g, x, y));
-                output[length++] = integer_string[0];
-//                memcpy(output + length++, integer_string, 1);
-            }
-        }
-//        memcpy(output + length++, "\n", 1);
-        output[length++] = '\n';
-    }
-}
+//static void boardBuilder(gamma_t *g, char **output, size_t maxLength) {
+//    size_t length = 0;
+//    char integerString[32] = "";
+//
+//    for (uint32_t y = g->height; y-- > 0;) { // prevent uint32_t flip
+//        for (uint32_t x = 0; x < g->width; x++) {
+//            if (isEmpty(g, x, y)) {
+//                *output[length++] = '.';
+//            }
+//            else {
+//                sprintf(integerString, "%d", getOwner(g, x, y));
+//                uint32_t len = strlen(integerString);
+//
+//                if (len == 1)
+//                    *output[length++] = integerString[0];
+//                else {
+//                    maxLength += (1 + len) * sizeof(char);
+//                    *output = (char *) realloc(output, maxLength);
+//                    if (*output == NULL)
+//                        exit(1);
+//                    *output[length++] = '[';
+//                    memcpy(*output + length, integerString, len);
+//                    length += len;
+//                    *output[length++] = ']';
+//                }
+//            }
+//        }
+//        *output[length++] = '\n';
+//    }
+//
+//    *output[maxLength - 1] = '\0';
+//}
 
 //-----------------------------------------------------------------------------
 
@@ -158,7 +170,7 @@ gamma_t *gamma_new(uint32_t width, uint32_t height,
     initBoard(board, width, height);
 
     initMembers(members, players);
-    *game = (gamma_t) {width, height, players, areas, 0,
+    *game = (gamma_t) {width, height, players, areas,
                        NUM_GOLDEN_MOVES, width * height,
                        members, board};
 
@@ -258,27 +270,44 @@ char *gamma_board(gamma_t *g) {
     if (g == NULL)
         return NULL;
 
-    uint32_t numDigits = 1;
 
-//    double maxId = 3123.32;
-//    double maxId = g->members[g->players - 1]->id;
-//    uint32_t numDigits = floor(log10((double)2)) + 1;
-//    uint32_t numDigits = (uint32_t) log10(maxId);
-//    uint32_t numDigits =
-//            floor(log10((double) maxId)) + 1;// numbers of digits in biggest id
-//    uint32_t numDigits = (uint32_t) log10(2.32) + 1;
-//    uint32_t line = g->width * 1;
-
-    size_t maxLength = sizeof(char) *
-                       (numDigits * g->height * (g->width + 1) + 1);
+    size_t maxLength = sizeof(char) * (g->height * (g->width + 1) + 1);
     char *output = (char *) malloc(maxLength);
 
     if (output == NULL) {
         return NULL;
     }
 
-    output[maxLength - 1] = '\0';
-    boardBuilder(g, output);
+//    boardBuilder(g, &output, maxLength);
+    size_t length = 0;
+    char integerString[32] = "";
 
+    for (uint32_t y = g->height; y-- > 0;) { // prevent uint32_t flip
+        for (uint32_t x = 0; x < g->width; x++) {
+            if (isEmpty(g, x, y)) {
+                output[length++] = '.';
+            }
+            else {
+                sprintf(integerString, "%d", getOwner(g, x, y));
+                uint32_t len = strlen(integerString);
+
+                if (len == 1)
+                    output[length++] = integerString[0];
+                else {
+                    maxLength += (1 + len) * sizeof(char);
+                    output = (char *) realloc(output, maxLength);
+                    if (output == NULL)
+                        return NULL;
+                    output[length++] = '[';
+                    memcpy(output + length, integerString, len);
+                    length += len;
+                    output[length++] = ']';
+                }
+            }
+        }
+        output[length++] = '\n';
+    }
+
+    output[maxLength - 1] = '\0';
     return output;
 }

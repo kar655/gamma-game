@@ -8,12 +8,10 @@
 #define GAMMA_GAMMAENGINELIB_H
 
 #include "../playerLib/player.h"
-#include "../Avl_Tree_lib/avl_tree.h"
-//#include "../gamma.h"
 
 /** @brief Structure that holds gama data.
  *
- *
+ * Remember gama data.
  */
 struct gamma {
     uint32_t width;             /**< Game width */
@@ -21,7 +19,6 @@ struct gamma {
     uint32_t players;           /**< Number of players */
     uint32_t areas;             /**< Maximal number of areas */
 
-    uint32_t resetCounter;      /**< XD */
     uint32_t numGoldenMoves;    /**< Maximal number of golden moves */
     uint64_t available;         /**< Number of empty fields */
     Member *members;            /**< Array of players */
@@ -47,8 +44,20 @@ void initMembers(Member *members, uint32_t players);
  */
 void initBoard(Node ***board, uint32_t width, uint32_t height);
 
+/** @brief Get player from current game.
+ * Get player with id @p player from @p g game
+ * @param g - current game
+ * @param player - Member's id
+ * @return Member with id @p player
+ */
 Member getPlayer(gamma_t *g, uint32_t player);
 
+/** @brief Give field with given coordinates.
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return Field in game @p g at (@p x, @p y)
+ */
 Node *getField(gamma_t *g, uint32_t x, uint32_t y);
 
 /** @brief Check input data.
@@ -85,17 +94,6 @@ bool isEmpty(gamma_t *g, uint32_t x, uint32_t y);
  */
 bool hasGoldenMoves(gamma_t *g, uint32_t player);
 
-/** @brief Checks if player owns field.
- * Checks if @p player owns @p elem.
- * @param g - current game
- * @param player - Member's id
- * @param elem - field
- * @return true if @p elem is not NULL and player owns field else false
- */
-bool isMineNode(gamma_t *g, uint32_t player, Node *elem);
-
-Member getPlayer(gamma_t *g, uint32_t player);
-
 /** @brief Check if player owns field.
  * Check if @p player owns field at (@p x, @p y)
  * @param g - current game
@@ -106,8 +104,6 @@ Member getPlayer(gamma_t *g, uint32_t player);
  */
 bool isMine(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
 
-bool isEnemy(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
-
 /** @brief Returns number of areas owned by @p player.
  *
  * @param g - current game
@@ -115,8 +111,6 @@ bool isEnemy(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
  * @return Number of areas owned by @p player
  */
 uint32_t getAreas(gamma_t *g, uint32_t player);
-
-AvlTree getPlayerRoots(gamma_t *g, uint32_t player);
 
 /** @brief Takes empty field.
  * Changes field (@p x, @p y) owner. Opposite to resetField()
@@ -145,53 +139,24 @@ void resetField(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
  */
 uint32_t getOwner(gamma_t *g, uint32_t x, uint32_t y);
 
-/** @brief Give bottom field.
- * Give bottom field of field at (@p x, @p y)
+/** @brief Changes surrounding counter.
+ * Changes surrounding counter of players that had fields nearby (@p x, @p y)
  * @param g - current game
  * @param x - first coordinate
  * @param y - second coordinate
- * @return bottom field or NULL.
+ * @param sub - subtraction
  */
-Node *getDown(gamma_t *g, uint32_t x, uint32_t y);
+void moveOnEmpty(gamma_t *g, uint32_t x, uint32_t y, bool sub);
 
-/** @brief Give upper field.
- * Give upper field of field at (@p x, @p y)
- * @param g - current game
- * @param x - first coordinate
- * @param y - second coordinate
- * @return upper field or NULL.
- */
-Node *getUp(gamma_t *g, uint32_t x, uint32_t y);
-
-/** @brief Give left field.
- * Give left field of field at (@p x, @p y)
- * @param g - current game
- * @param x - first coordinate
- * @param y - second coordinate
- * @return left field or NULL.
- */
-Node *getLeft(gamma_t *g, uint32_t x, uint32_t y);
-
-/** @brief Give right field.
- * Give right field of field at (@p x, @p y)
- * @param g - current game
- * @param x - first coordinate
- * @param y - second coordinate
- * @return right field or NULL.
- */
-Node *getRight(gamma_t *g, uint32_t x, uint32_t y);
-
-/** @brief Merges fields.
- * Merge fields owned by @p player in @p arr with @p biggest
+/** @brief Calculates number of empty nearby fields.
+ * Calculates number of empty fields of field at (@p x, @p y)
+ * which has only 1 neighbour.
  * @param g - current game
  * @param player - Member's id
- * @param arr - array of nearby fields
- * @param biggest - field with biggest rank among nearby fields
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return number of empty nearby fields with exactly 1 neighbour
  */
-void mergeFields(gamma_t *g, uint32_t player, Node *arr[], Node *biggest);
-
-uint32_t moveOnEmpty(gamma_t *g, uint32_t x, uint32_t y, bool sub);
-
 uint32_t numEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
 
 /** @brief Returns number of friendly fields connected to certain field.

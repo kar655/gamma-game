@@ -38,6 +38,27 @@ static const char board[] =
  * a w przeciwnym przypadku kod zakończenia programu jest kodem błędu.
  */
 int main() {
+//
+//    gamma_t *moje = gamma_new(10, 10, 100, 10);
+//    gamma_move(moje, 12, 1, 9);
+//    gamma_move(moje, 1, 0, 0);
+//    gamma_move(moje, 100, 3, 3);
+//    gamma_move(moje, 21, 4, 5);
+//    gamma_move(moje, 37, 5, 5);
+//    gamma_move(moje, 2, 4, 6);
+//    gamma_move(moje, 1, 5, 6);
+//    gamma_move(moje, 3, 6, 6);
+//    gamma_move(moje, 7, 7, 6);
+//    char *b = gamma_board(moje);
+//    assert(b != NULL);
+////    printf(b);
+//    printf("%s", b);
+//    free(b);
+//
+//    gamma_delete(moje);
+
+
+
     gamma_t *g;
 
 

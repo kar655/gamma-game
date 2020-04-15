@@ -7,11 +7,10 @@
 #ifndef GAMMA_PLAYER_H
 #define GAMMA_PLAYER_H
 
+#include "../findUnionLib/findUnion.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "../findUnionLib/findUnion.h"
-#include "../Avl_Tree_lib/avl_tree.h"
 
 /** @brief Player structure.
  *
@@ -24,10 +23,8 @@ struct member {
     uint64_t owned;             /**< Number of owned fields */
     uint32_t goldenMoves;       /**< Used golden moves */
 
-    uint32_t size;
-    AvlTree roots;              /**< todo */
-    uint64_t surrounding;       /**< Number of empty fields surrounding*/
-    bool changedSurrounding;    /**< todo */
+    uint64_t surrounding;       /**< Number of empty fields surrounding */
+    bool changedSurrounding;    /**< If surrounding fields were changed */
 };
 
 
@@ -48,6 +45,5 @@ Member newMember(uint32_t id);
  */
 void removeMember(Member player);
 
-//void addRoot(Member player, Node *elem);
 
 #endif //GAMMA_PLAYER_H

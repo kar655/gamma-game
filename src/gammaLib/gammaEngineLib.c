@@ -1,9 +1,81 @@
 
 #include "gammaEngineLib.h"
 
+/** @brief Builds connections of fields.
+ * Build areas of fields owned by @p id player starting from Node @p center
+ * @param g - current game
+ * @param center - Node that we are merging with
+ * @param elem - current field
+ * @param id - player id
+ */
 static void buildArea(gamma_t *g, Node *center, Node *elem, uint32_t id);
 
+/** @brief Load 4 nearby fields
+ * @param g - current game
+ * @param arr - Node * array with size equal to 4
+ * @param x - first coordinate
+ * @param y - second coordinate
+ */
 static void nearbyFields(gamma_t *g, Node *arr[], uint32_t x, uint32_t y);
+
+/** @brief Check if Node is empty.
+ * Check @p elem.
+ * @param elem - Node being checked
+ * @return false if node is not empty or its NULL else true
+ */
+static bool isEmptyNode(Node *elem);
+
+/** @brief Checks if player owns field.
+ * Checks if @p player owns @p elem.
+ * @param g - current game
+ * @param player - Member's id
+ * @param elem - field
+ * @return true if @p elem is not NULL and player owns field else false
+ */
+static bool isMineNode(gamma_t *g, uint32_t player, Node *elem);
+
+/** @brief Give bottom field.
+ * Give bottom field of field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return bottom field or NULL.
+ */
+static Node *getDown(gamma_t *g, uint32_t x, uint32_t y);
+
+/** @brief Give upper field.
+ * Give upper field of field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return upper field or NULL.
+ */
+static Node *getUp(gamma_t *g, uint32_t x, uint32_t y);
+
+/** @brief Give left field.
+ * Give left field of field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return left field or NULL.
+ */
+static Node *getLeft(gamma_t *g, uint32_t x, uint32_t y);
+
+/** @brief Give right field.
+ * Give right field of field at (@p x, @p y)
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return right field or NULL.
+ */
+static Node *getRight(gamma_t *g, uint32_t x, uint32_t y);
+
+/** @brief Set nearby field added to false
+ * @param g - current game
+ * @param player - Member's id
+ * @param arr - array ofisEmptyNode nearby fields
+ */
+static void setNearbyFalse(gamma_t *g, uint32_t player, Node **arr);
 
 inline bool positive(uint32_t num) {
     return num > 0;
@@ -44,7 +116,7 @@ inline bool hasGoldenMoves(gamma_t *g, uint32_t player) {
     return getPlayer(g, player)->goldenMoves < g->numGoldenMoves;
 }
 
-bool isEmptyNode(Node *elem) {
+static bool isEmptyNode(Node *elem) {
     if (elem == NULL)
         return false;
     else
@@ -70,16 +142,8 @@ inline bool isMine(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     return g->board[x][y]->owner == getPlayer(g, player)->id;
 }
 
-inline bool isEnemy(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
-    return !isEmpty(g, x, y) && !isMine(g, player, x, y);
-}
-
 inline uint32_t getAreas(gamma_t *g, uint32_t player) {
     return g->members[player - 1]->areas;
-}
-
-inline AvlTree getPlayerRoots(gamma_t *g, uint32_t player) {
-    return getPlayer(g, player)->roots;
 }
 
 void takeField(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
@@ -118,20 +182,14 @@ static inline Member getOwnerPlayer(gamma_t *g, uint32_t x, uint32_t y) {
     return getPlayer(g, getOwner(g, x, y));
 }
 
-uint32_t moveOnEmpty(gamma_t *g, uint32_t x, uint32_t y, bool sub) {
+void moveOnEmpty(gamma_t *g, uint32_t x, uint32_t y, bool sub) {
 
-    uint32_t empty = 0;
     int change = sub ? -1 : 1;
 
-//    uint32_t arr[4] = {0};
     Node *arr[4];
     nearbyFields(g, arr, x, y);
-//    uint32_t i = 0;
     uint32_t newX[4] = {x - 1, x, x + 1, x};
     uint32_t newY[4] = {y, y + 1, y, y - 1};
-
-    // musze zmniejszyc surrounding innnym gracza ktorzy sasiadowali z tym polem
-    // ale pamietac ktorym zmniejszylem zeby kazdemu dokladnie raz
 
     for (int i = 0; i < 4; i++) {
         if (arr[i] != NULL && !isEmptyNode(arr[i])
@@ -147,12 +205,7 @@ uint32_t moveOnEmpty(gamma_t *g, uint32_t x, uint32_t y, bool sub) {
             getOwnerPlayer(g, newX[i], newY[i])->changedSurrounding)
             getOwnerPlayer(g, newX[i], newY[i])->changedSurrounding = false;
     }
-
-
-    return empty;
 }
-
-void nearbyFields(gamma_t *g, Node *arr[], uint32_t x, uint32_t y);
 
 uint32_t numEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     uint32_t empty = 0;
@@ -163,10 +216,8 @@ uint32_t numEmpty(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     nearbyFields(g, arr, x, y);
 
     for (int i = 0; i < 4; i++) {
-        if (arr[i] != NULL) {
-            if (isEmptyNode(arr[i]))
-                empty += numNeighbours(g, player, newX[i], newY[i]) == 1;
-        }
+        if (arr[i] != NULL && isEmptyNode(arr[i]))
+            empty += numNeighbours(g, player, newX[i], newY[i]) == 1;
     }
 
 

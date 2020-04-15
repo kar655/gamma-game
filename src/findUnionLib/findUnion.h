@@ -23,9 +23,8 @@ struct Node {
     y;                      /**< Second coordinate */
 
     bool added;             /**< State of Node */
-    uint32_t currentReset;  /**< Reset counter */
     uint32_t owner;         /**< Id of owner */
-    uint32_t rank;          /**< Number of sub-Nodes */
+    uint32_t rank;          /**< Number of merges to this Node */
 
     Node *parent;           /**< Parent Node */
 };
@@ -39,19 +38,20 @@ struct Node {
  */
 Node *newRoot(uint32_t player, uint32_t x, uint32_t y);
 
-uint32_t getData(Node *elem);
-
-void setData(Node *elem, uint32_t id);
-
-bool isAdded(Node *elem);
-
+/** @brief Check if @p elem root is Added.
+ * @param elem - Node being checked
+ * @return true if @p elem root is added else false
+ */
 bool isRootAdded(Node *elem);
 
-void setAdded(Node *elem, bool state);
-
+/** @brief Set @p elem added.
+ * Changes @p elem root added to @p state
+ * @param elem - Son of root being changed
+ * @param state - new state
+ */
 void setRootAdded(Node *elem, bool state);
 
-/** @brief Returns root of node.
+/** @brief Returns root of Node.
  * Return root of @p elem and performs path compression
  * @param elem - Root's son
  * @return NULL if @p elem is NULL else @p elem's root
@@ -80,7 +80,5 @@ Node *merge(Node *a, Node *b);
  * @param elem - Node to clear data
  */
 void clearNodeData(Node *elem);
-
-void removeNode(Node *elem);
 
 #endif //GAMMA_FINDUNION_H

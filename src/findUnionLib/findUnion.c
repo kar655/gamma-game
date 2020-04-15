@@ -5,7 +5,6 @@
  */
 
 
-#include <assert.h>
 #include "findUnion.h"
 
 
@@ -14,32 +13,13 @@ Node *newRoot(uint32_t player, uint32_t x, uint32_t y) {
     if (output == NULL)
         return NULL;
 
-    *output = (Node) {x, y, false, 0, player, 0, output};
+    *output = (Node) {x, y, false, player, 0, output};
 
     return output;
 }
 
-inline uint32_t getData(Node *elem) {
-    return elem == NULL ? 0 : elem->owner;
-}
-
-void setData(Node *elem, uint32_t id) {
-    elem->owner = id;
-}
-
-inline bool isAdded(Node *elem) {
-    return elem->added;
-}
-
-// TODO spadnie z rowerka jak elem jest nullem
 inline bool isRootAdded(Node *elem) {
     return find(elem)->added;
-}
-
-void setAdded(Node *elem, bool state) {
-    if (elem == NULL)
-        return;
-    elem->added = state;
 }
 
 void setRootAdded(Node *elem, bool state) {
@@ -95,7 +75,3 @@ void clearNodeData(Node *elem) {
     elem->rank = 0;
 }
 
-void removeNode(Node *elem) {
-    free(elem);
-    elem = NULL;
-}
