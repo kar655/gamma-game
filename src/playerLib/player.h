@@ -8,9 +8,9 @@
 #define GAMMA_PLAYER_H
 
 #include "../findUnionLib/findUnion.h"
-#include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 /** @brief Player structure.
  *
@@ -27,10 +27,15 @@ struct member {
     bool changedSurrounding;    /**< If surrounding fields were changed */
 };
 
-
+/**
+ * Player structure.
+ */
 typedef struct member member;
 
-typedef member *Member;
+/**
+ * Pointer to player structure.
+ */
+typedef member * Member;
 
 /** @brief Creates new Member
  * Creates new member with id = @p id

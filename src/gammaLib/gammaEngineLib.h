@@ -1,5 +1,5 @@
 /** @file
- * Interface of class Player
+ * Helper functions to gamma functions.
  *
  * @author Karol Zagródka <karol.zagrodka@gmail.com>
  */
@@ -8,6 +8,9 @@
 #define GAMMA_GAMMAENGINELIB_H
 
 #include "../playerLib/player.h"
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 /** @brief Structure that holds gama data.
  *
@@ -27,6 +30,10 @@ struct gamma {
 
 typedef struct gamma gamma_t;
 
+/** @brief if @p num > 0.
+ * @param num - number
+ * @return true if @p num > 0 else false
+ */
 bool positive(uint32_t num);
 
 /** @brief Initialize all members.

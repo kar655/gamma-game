@@ -4,7 +4,6 @@
  * @author Karol Zagródka <karol.zagrodka@gmail.com>
  */
 
-
 #include "findUnion.h"
 
 

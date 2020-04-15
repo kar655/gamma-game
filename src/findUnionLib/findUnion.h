@@ -11,7 +11,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-
+/**
+ * Field data.
+ */
 typedef struct Node Node;
 
 /** @brief Structure that holds field data.

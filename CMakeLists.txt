@@ -20,37 +20,20 @@ set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
 # set(CMAKE_C_FLAGS_DEBUG "-g")
 
 
-#set(TEST_FILE
-#    src/gamma_test.c
-##    ../TESTY/ipp-2020-testy/z2/jm/random/669728508.c
-#        )
-
 
 # Wskazujemy pliki źródłowe.
 set(SOURCE_FILES
 
-#    src/gamma_test.c
-
-    ${TEST_FILE}
+    src/gamma_test.c
 
     src/findUnionLib/findUnion.c src/findUnionLib/findUnion.h
     src/playerLib/player.c src/playerLib/player.h
-    src/Avl_Tree_lib/avl_tree.c src/Avl_Tree_lib/avl_tree.h
     src/gammaLib/gammaEngineLib.c src/gammaLib/gammaEngineLib.h
     src/gamma.c src/gamma.h
     )
 
 # Wskazujemy plik wykonywalny.
 add_executable(gamma ${SOURCE_FILES})
-
-## --------------------------------------------------
-#enable_testing()
-## add_subdirectory(testy_do_duzego)
-#
-#add_executable(gbz1 gbz1.c ${SOURCE_FILES})
-#add_test(NAME pierwszy COMMAND gbz1)
-## add_test(NAME testy_do_duzego COMMAND *.c)
-## --------------------------------------------------
 
 
 # Dodajemy obsługę Doxygena: sprawdzamy, czy jest zainstalowany i jeśli tak to:

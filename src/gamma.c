@@ -6,13 +6,12 @@
 
 #include "gammaLib/gammaEngineLib.h"
 #include "gamma.h"
-#include "playerLib/player.h"
-
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-
+/**
+ * Maximal number of golden moves of one player
+ */
 #define NUM_GOLDEN_MOVES 1
 
 /** @brief Do quick check if golden move can be done.
@@ -48,15 +47,6 @@ static void goldenMovePrep(gamma_t *g, Member attackedPlayer,
  */
 static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
                              uint32_t x, uint32_t y);
-
-// /** @brief Builds board of game @p g in @p output.
-// * Empty place is '.' taken is owner's id
-// * @param g - current game
-// * @param output - pointer to allocated memory of board size
-// * @param maxLength - size of allocated memory
-// */
-//static void boardBuilder(gamma_t *g, char **output, size_t maxLength);
-
 
 // ----------------------------------------------------------------------------
 
@@ -114,44 +104,12 @@ static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
     }
 }
 
-//static void boardBuilder(gamma_t *g, char **output, size_t maxLength) {
-//    size_t length = 0;
-//    char integerString[32] = "";
-//
-//    for (uint32_t y = g->height; y-- > 0;) { // prevent uint32_t flip
-//        for (uint32_t x = 0; x < g->width; x++) {
-//            if (isEmpty(g, x, y)) {
-//                *output[length++] = '.';
-//            }
-//            else {
-//                sprintf(integerString, "%d", getOwner(g, x, y));
-//                uint32_t len = strlen(integerString);
-//
-//                if (len == 1)
-//                    *output[length++] = integerString[0];
-//                else {
-//                    maxLength += (1 + len) * sizeof(char);
-//                    *output = (char *) realloc(output, maxLength);
-//                    if (*output == NULL)
-//                        exit(1);
-//                    *output[length++] = '[';
-//                    memcpy(*output + length, integerString, len);
-//                    length += len;
-//                    *output[length++] = ']';
-//                }
-//            }
-//        }
-//        *output[length++] = '\n';
-//    }
-//
-//    *output[maxLength - 1] = '\0';
-//}
-
 //-----------------------------------------------------------------------------
 
 gamma_t *gamma_new(uint32_t width, uint32_t height,
                    uint32_t players, uint32_t areas) {
-    if (!positive(width) || !positive(height) || !positive(players))
+    if (!positive(width) || !positive(height) || !positive(players)
+        || !positive(areas))
         return NULL;
 
     gamma_t *game = malloc(sizeof(gamma_t));
@@ -247,14 +205,12 @@ uint64_t gamma_busy_fields(gamma_t *g, uint32_t player) {
 }
 
 uint64_t gamma_free_fields(gamma_t *g, uint32_t player) {
-
     if (wrongInput(g, player))
         return 0;
     else if (getAreas(g, player) == g->areas)
         return getPlayer(g, player)->surrounding;
     else
         return g->available;
-
 }
 
 bool gamma_golden_possible(gamma_t *g, uint32_t player) {
@@ -270,7 +226,6 @@ char *gamma_board(gamma_t *g) {
     if (g == NULL)
         return NULL;
 
-
     size_t maxLength = sizeof(char) * (g->height * (g->width + 1) + 1);
     char *output = (char *) malloc(maxLength);
 
@@ -278,7 +233,6 @@ char *gamma_board(gamma_t *g) {
         return NULL;
     }
 
-//    boardBuilder(g, &output, maxLength);
     size_t length = 0;
     char integerString[32] = "";
 

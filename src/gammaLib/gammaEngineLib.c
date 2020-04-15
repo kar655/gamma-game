@@ -1,3 +1,8 @@
+/** @file
+ * Implementation of helper functions to gamma functions.
+ *
+ * @author Karol Zagródka <karol.zagrodka@gmail.com>
+ */
 
 #include "gammaEngineLib.h"
 
@@ -76,6 +81,15 @@ static Node *getRight(gamma_t *g, uint32_t x, uint32_t y);
  * @param arr - array ofisEmptyNode nearby fields
  */
 static void setNearbyFalse(gamma_t *g, uint32_t player, Node **arr);
+
+/** @brief Get owner of field.
+ * Get owner of field at (@p x, @p y) in game @p g
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return Owner of field (@p x, @p y)
+ */
+static inline Member getOwnerPlayer(gamma_t *g, uint32_t x, uint32_t y);
 
 inline bool positive(uint32_t num) {
     return num > 0;
@@ -242,17 +256,13 @@ static void nearbyFields(gamma_t *g, Node *arr[], uint32_t x, uint32_t y) {
     arr[3] = getDown(g, x, y);
 }
 
-
 static void setNearbyFalse(gamma_t *g, uint32_t player, Node **arr) {
     for (int i = 0; i < 4; i++)
         if (arr[i] != NULL && isMineNode(g, player, arr[i])) {
             setRootAdded(arr[i], false);
-//            insert(&getPlayer(g, player)->roots, find(arr[i]));
         }
 }
 
-// jak zmieni sie ilosz obszarow gracza gdyby dolozyl pionek na x, y
-// o ile spadnie
 uint32_t areasChange(gamma_t *g, uint32_t player,
                      uint32_t x, uint32_t y, bool middle) {
 
