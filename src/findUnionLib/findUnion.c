@@ -73,4 +73,3 @@ void clearNodeData(Node *elem) {
     elem->parent = elem;
     elem->rank = 0;
 }
-

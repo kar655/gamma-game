@@ -28,6 +28,9 @@ struct gamma {
     Node ***board;              /**< 2D Array of fields */
 };
 
+/**
+ * Game structure.
+ */
 typedef struct gamma gamma_t;
 
 /** @brief if @p num > 0.
@@ -40,16 +43,18 @@ bool positive(uint32_t num);
  * Allocates memory for all Members in array
  * @param members - array of members
  * @param players - number of members
+ * @return true if init had enough memory else false
  */
-void initMembers(Member *members, uint32_t players);
+bool initMembers(Member *members, uint32_t players);
 
 /** @brief Initialize game board.
  * Allocates memory for all fields
  * @param board - allocated memory for new board
  * @param width - board width
  * @param height - board height
+ * @return true if init had enough memory else false
  */
-void initBoard(Node ***board, uint32_t width, uint32_t height);
+bool initBoard(Node ***board, uint32_t width, uint32_t height);
 
 /** @brief Get player from current game.
  * Get player with id @p player from @p g game

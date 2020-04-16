@@ -14,6 +14,13 @@
  */
 #define NUM_GOLDEN_MOVES 1
 
+/** @brief Free @p g, @p members, @p board.
+ * @param g - current game
+ * @param members - array of players
+ * @param board - game board
+ */
+static void freeData(gamma_t *g, Member *members, Node ***board);
+
 /** @brief Do quick check if golden move can be done.
  *  Checks if attacking player has maximal amount of areas and doesn't have
  *  friendly fields nearby.
@@ -49,6 +56,12 @@ static bool goldenMoveFinish(gamma_t *g, Member attackedPlayer, uint32_t player,
                              uint32_t x, uint32_t y);
 
 // ----------------------------------------------------------------------------
+
+static void freeData(gamma_t *g, Member *members, Node ***board) {
+    free(g);
+    free(members);
+    free(board);
+}
 
 static bool canGoldFastCheck(gamma_t *g, uint32_t player,
                              uint32_t x, uint32_t y) {
@@ -116,18 +129,26 @@ gamma_t *gamma_new(uint32_t width, uint32_t height,
     Member *members = malloc(sizeof(member) * players);
     Node ***board = (Node ***) malloc(width * sizeof(Node **));
 
-    if (game == NULL || members == NULL || board == NULL)
+    if (game == NULL || members == NULL || board == NULL) {
+        freeData(game, members, board);
         return NULL;
-
-    for (unsigned int i = 0; i < width; i++) {
-        board[i] = (Node **) malloc(height * sizeof(Node *));
-        if (board[i] == NULL)
-            return NULL;
     }
 
-    initBoard(board, width, height);
+    for (uint32_t i = 0; i < width; i++) {
+        board[i] = (Node **) malloc(height * sizeof(Node *));
+        if (board[i] == NULL) {
+            for (uint32_t j = 0; j < i; j++) // clear previous
+                free(board[j]);
+            freeData(game, members, board);
+            return NULL;
+        }
+    }
 
-    initMembers(members, players);
+    if (!initBoard(board, width, height) || !initMembers(members, players)) {
+        gamma_delete(game);
+        return NULL;
+    }
+
     *game = (gamma_t) {width, height, players, areas,
                        NUM_GOLDEN_MOVES, width * height,
                        members, board};
@@ -247,7 +268,7 @@ char *gamma_board(gamma_t *g) {
 
                 if (len == 1)
                     output[length++] = integerString[0];
-                else {
+                else { // player with id > 9
                     maxLength += (1 + len) * sizeof(char);
                     output = (char *) realloc(output, maxLength);
                     if (output == NULL)

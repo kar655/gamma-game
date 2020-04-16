@@ -95,21 +95,23 @@ inline bool positive(uint32_t num) {
     return num > 0;
 }
 
-void initMembers(Member *members, uint32_t players) {
+bool initMembers(Member *members, uint32_t players) {
     for (unsigned int i = 0; i < players; i++) {
         members[i] = newMember(i + 1);
         if (members[i] == NULL)
-            exit(1);
+            return false;
     }
+    return true;
 }
 
-void initBoard(Node ***board, uint32_t width, uint32_t height) {
+bool initBoard(Node ***board, uint32_t width, uint32_t height) {
     for (uint32_t i = 0; i < width; i++)
         for (uint32_t j = 0; j < height; j++) {
             board[i][j] = newRoot(0, i, j);
             if (board[i][j] == NULL)
-                exit(1);
+                return false;
         }
+    return true;
 }
 
 inline bool wrongInput(gamma_t *g, uint32_t player) {
