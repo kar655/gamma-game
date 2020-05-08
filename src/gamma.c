@@ -286,3 +286,32 @@ char *gamma_board(gamma_t *g) {
     output[maxLength - 1] = '\0';
     return output;
 }
+
+// -1 wszyscy nie moga sie ruszyc
+static int nextPlayerId(gamma_t *g, int last) {
+    for (int p = (last + 1) % (int) g->players; p != last;
+         p = (p + 1) % (int) g->players) {
+
+        if (gamma_free_fields(g, p + 1) > 0
+            || gamma_golden_possible(g, p + 1)) {
+            return p;
+        }
+    }
+
+    return -1;
+}
+
+char *nextPlayerInfo(gamma_t *g, int *last) {
+    *last = *last == 0 ? 1 : nextPlayerId(g, *last);
+
+    if (*last == -1)
+        return NULL;
+
+    // 'PLAYER {id} {busy_fields} {free_fields} {Golden Possible / nic}\n\0'
+    size_t length = 500;
+    char *output = malloc(length);
+    sprintf(output, "PLAYER %d %lu %lu %s", *last, gamma_busy_fields(g, *last),
+            gamma_free_fields(g, *last), gamma_golden_possible(g, *last) ? "G" : "");
+
+    return output;
+}
