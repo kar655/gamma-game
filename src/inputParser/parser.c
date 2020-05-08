@@ -24,7 +24,7 @@ void textMessage(char *str) {
         return;
     }
 
-    printf("%s\n", str);
+    printf("%s", str);
     free(str);
     lineNumber++;
     fflush(stdout);

@@ -113,4 +113,10 @@ char* gamma_board(gamma_t *g);
 
 char* nextPlayerInfo(gamma_t *g, int *last);
 
+char* paintBoard(gamma_t *g, uint32_t x, uint32_t y);
+
+uint32_t getWidth(gamma_t *g);
+
+uint32_t getHeight(gamma_t *g);
+
 #endif /* GAMMA_H */

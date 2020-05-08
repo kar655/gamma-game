@@ -289,11 +289,11 @@ char *gamma_board(gamma_t *g) {
 
 // -1 wszyscy nie moga sie ruszyc
 static int nextPlayerId(gamma_t *g, int last) {
-    for (int p = (last + 1) % (int) g->players; p != last;
-         p = (p + 1) % (int) g->players) {
+    for (int p = last % (int) g->players + 1; p != last;
+         p = p % (int) g->players + 1) {
 
-        if (gamma_free_fields(g, p + 1) > 0
-            || gamma_golden_possible(g, p + 1)) {
+        if (gamma_free_fields(g, p) > 0
+            || gamma_golden_possible(g, p)) {
             return p;
         }
     }
@@ -314,4 +314,43 @@ char *nextPlayerInfo(gamma_t *g, int *last) {
             gamma_free_fields(g, *last), gamma_golden_possible(g, *last) ? "G" : "");
 
     return output;
+}
+// both length 4
+#define BACKGROUND_WHITE "\x1b[7m"
+#define COLOR_RESET "\x1b[0m"
+
+char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {
+    // char *output = gamma_board(g);
+    // output = (char *) realloc(output, strlen(output) + 14);
+
+    char *board = gamma_board(g);
+    char *output = malloc(strlen(board) + 150);  // 2 * 7 + 1
+    y = g->height - y - 1; // flip y
+
+    // y * g->height + x
+    // size_t len = x * g->width + y;
+    size_t len = y * (g->height + 1) + x;
+    memcpy(output, board, len);
+//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
+    memcpy(output + len, BACKGROUND_WHITE, 4);
+//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
+
+    // tutaj jakies get szerokosc najwieksza
+    memcpy(output + len + 4, board + len, 1);
+//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
+
+    memcpy(output + len + 4 + 1, COLOR_RESET, 4);
+//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
+    memcpy(output + len + 4 + 1 + 4, board + len + 1, g->height * (g->width + 1) - len);
+//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
+
+    return output;
+}
+
+inline uint32_t getWidth(gamma_t *g) {
+    return g->width;
+}
+
+inline uint32_t getHeight(gamma_t *g) {
+    return g->height;
 }
