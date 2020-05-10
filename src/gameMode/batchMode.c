@@ -22,6 +22,9 @@ bool initializeBatch(uint32_t values[]) {
 
     okMessage();
     gameLoop();
+
+    gamma_delete(game);
+    return true;
 }
 
 
@@ -38,8 +41,8 @@ static void gameLoop() {
     uint32_t values[4];
 //    int num;
 
-    while (true) {
-        giveLine(&line);
+    while (giveLine(&line) != -1) {
+//        giveLine(&line);
 //        num = readNumbers(values, line + 1, 3);
 
         switch (line[0]) {
@@ -123,6 +126,9 @@ static void gameLoop() {
             case '\n':
                 free(line);
                 nextLine();
+                break;
+
+            case 4:
                 break;
 
             default:

@@ -26,7 +26,6 @@ static inline uint32_t max(uint32_t a, uint32_t b) {
     return a >= b ? a : b;
 }
 
-
 char getch() {
     char buf = 0;
     struct termios old = {0};
@@ -104,6 +103,9 @@ bool initializeInteractive(uint32_t values[]) {
     okMessage();
     gameLoop();
     printf("QUIT\n");
+
+    gamma_delete(game);
+    return true;
 }
 
 //        clear
@@ -152,7 +154,11 @@ static void gameLoop() {
         printf("id = %d \t\t posX = %u \t\t posY %u\n", id, posX, posY);
         ch = getch();
 //        ch = getchar();
-        if (isArrowKey(ch)) {
+        if (ch == 'c' || ch == 'C') {   // skip move
+            free(playerInfo);
+            playerInfo = nextPlayerInfo(game, &id);
+        }
+        else if (isArrowKey(ch)) {
             ch = getch();
             move((unsigned int) ch - 65);
             ch = 0;
@@ -169,11 +175,11 @@ static void gameLoop() {
                 playerInfo =  nextPlayerInfo(game, &id);
             }
         }
-        if (playerInfo == NULL) // no one can't move
-            break;
+//        if (playerInfo == NULL) // no one can't move
+//            break;
 
         clear();
-    } while (keepPlaying(ch));
+    } while (playerInfo != NULL && ch != 4);
 
     // enable cursor
     printf("\e[?25h");
@@ -185,4 +191,15 @@ static void gameLoop() {
 //        switch (line[0]) {}
 //
 //    }
+
+
+    board = gamma_board(game);//paintBoard(game, posX, posY);
+    if (board == NULL)
+        return;
+    printf("%s\n", board);
+    free(board);
+
+    char *summary = playersSummary(game);
+    printf("%s", summary);
+    free(summary);
 }

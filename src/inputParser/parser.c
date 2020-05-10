@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <assert.h>
 
 int lineNumber = 1;
 
@@ -80,7 +81,8 @@ int readNumbers(uint32_t values[], char *str, int expectingValues) {
 //I width height players areas
 
 // todo tutaj lineNumber++;
-void giveLine(char **str) {
+// bylo void
+int giveLine(char **str) {
     size_t inputSize = 0;
     char *instructions = NULL;
     uint32_t values[4];
@@ -89,16 +91,20 @@ void giveLine(char **str) {
 
     if (read == -1) {
         free(instructions);
-        exit(2);
+        //exit(2);
+        return -1;
     }
 
     if (instructions == NULL) {
         free(instructions);
-        exit(1);
+//        exit(1);
+        assert(false);
     }
 
 
     *str = instructions;
+
+    return 0;
 }
 
 int getMode() {
@@ -119,7 +125,8 @@ int getMode() {
 //
 
     char *instructions;
-    giveLine(&instructions);
+    if (giveLine(&instructions) == -1)
+        return -1;
     uint32_t values[4];
 //    giveValues(values, instructions + 1);
     if (instructions[0] == '#' || instructions[0] == '\n') {
@@ -143,11 +150,16 @@ int getMode() {
 
     if (instructions[0] == 'B') {
         // batch mode with values
-        initializeBatch(values);
-    }
-    else {
+        if (initializeBatch(values)) {
+            free(instructions);
+            return 1; // game completed
+        }
+    } else {
         // interactive mode with values
-        initializeInteractive(values);
+        if (initializeInteractive(values)) {
+            free(instructions);
+            return 1; // game completed
+        }
     }
 
     // wrong numbers to make new gamma game or not enough memory

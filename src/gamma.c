@@ -289,14 +289,24 @@ char *gamma_board(gamma_t *g) {
 
 // -1 wszyscy nie moga sie ruszyc
 static int nextPlayerId(gamma_t *g, int last) {
-    for (int p = last % (int) g->players + 1; p != last;
-         p = p % (int) g->players + 1) {
+    uint32_t temp;
+    for (uint32_t p = last; p < last + g->players; p++) {
+        temp = p % g->players + 1;
 
-        if (gamma_free_fields(g, p) > 0
-            || gamma_golden_possible(g, p)) {
-            return p;
+        if (gamma_free_fields(g, temp) > 0
+            || gamma_golden_possible(g, temp)) {
+            return temp;
         }
     }
+
+//    for (int p = last % (int) g->players + 1; p != last;
+//         p = p % (int) g->players + 1) {
+//
+//        if (gamma_free_fields(g, p) > 0
+//            || gamma_golden_possible(g, p)) {
+//            return p;
+//        }
+//    }
 
     return -1;
 }
@@ -324,7 +334,7 @@ char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {
     // output = (char *) realloc(output, strlen(output) + 14);
 
     char *board = gamma_board(g);
-    char *output = malloc(strlen(board) + 150);  // 2 * 7 + 1
+    char *output = malloc(strlen(board) + 15);  // 2 * 7 + 1
     y = g->height - y - 1; // flip y
 
     // y * g->height + x
@@ -344,6 +354,7 @@ char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {
     memcpy(output + len + 4 + 1 + 4, board + len + 1, g->height * (g->width + 1) - len);
 //    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
 
+    free(board);
     return output;
 }
 
@@ -353,4 +364,44 @@ inline uint32_t getWidth(gamma_t *g) {
 
 inline uint32_t getHeight(gamma_t *g) {
     return g->height;
+}
+
+char *playerInfo(gamma_t *g) {
+
+}
+
+char *playersSummary(gamma_t *g) {
+    char *output = malloc(g->players * 11 + 1);
+    output[g->players * 11] = '\0';
+//    return NULL;
+    size_t length = 0;
+    size_t lineLenth = 0;
+    size_t maxLength = 0; //g->players * 11 + 1;
+    char idString[32] = "";
+    char fieldsString[32] = "";
+
+
+//    sprintf(integerString, "%d", getOwner(g, x, y));
+
+
+    // "PLAYER {id} {ownedFields}"
+    // 6 + 1 + id + 1 + ownedfield + 1
+    // na koncu + 1 za \o
+    for (uint32_t id = 1; id <= g->players; id++) {
+        sprintf(idString, "%u", id);
+        sprintf(fieldsString, "%lu", gamma_busy_fields(g, id));
+
+
+
+        memcpy(output + length, "PLAYER ", 7);
+        length += 7;
+        memcpy(output + length, idString, 1);
+        length += strlen(idString);
+        output[length++] = ' ';
+        memcpy(output + length, fieldsString, 1);
+        length += strlen(fieldsString);
+        output[length++] = '\n';
+    }
+
+    return output;
 }

@@ -17,7 +17,7 @@ void okMessage();
 
 void errorMessage();
 
-void giveLine(char **str);
+int giveLine(char **str);
 
 int readNumbers(uint32_t values[], char *str, int expectingValues);
 

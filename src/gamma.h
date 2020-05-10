@@ -119,4 +119,6 @@ uint32_t getWidth(gamma_t *g);
 
 uint32_t getHeight(gamma_t *g);
 
+char* playersSummary(gamma_t *g);
+
 #endif /* GAMMA_H */
