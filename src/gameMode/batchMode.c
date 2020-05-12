@@ -8,6 +8,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
 
 gamma_t *game;
 
@@ -44,6 +46,23 @@ static void gameLoop() {
     while (giveLine(&line) != -1) {
 //        giveLine(&line);
 //        num = readNumbers(values, line + 1, 3);
+//        case '#':
+//        case '\n':
+//        free(line);
+//        break;
+//        nextLine();
+        if (line[0] == '#' || line[0] == '\n') {
+            free(line);
+            nextLine();
+            continue;
+        }
+
+//        printf("len %lu    isspace %d\n", strlen(line), isspace(line[1]));
+        if (strlen(line) > 1 && isspace(line[1]) == 0) {
+            free(line);
+            errorMessage();
+            continue;
+        }
 
         switch (line[0]) {
             case 'm':
@@ -95,7 +114,7 @@ static void gameLoop() {
                 free(line);
                 break;
 
-            case 'q':
+            case 'q':   // todo powinnos sprawdzac czy jest odstep (spacja?)
                 if (readNumbers(values, line + 1, 1) == 1) {
                     lineMessage(
                             gamma_golden_possible(game, values[0])
