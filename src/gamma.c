@@ -8,6 +8,7 @@
 #include "gamma.h"
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 /**
  * Maximal number of golden moves of one player
@@ -243,11 +244,32 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player) {
            != (uint64_t) g->width * (uint64_t) g->height;
 }
 
+uint32_t fieldLength(gamma_t *g) {
+    char helper[32] = "";
+    sprintf(helper, "%u", g->players);
+    uint32_t numberLength = strlen(helper);
+
+    if (numberLength > 1)
+        numberLength++;
+
+    return numberLength;
+}
+
 char *gamma_board(gamma_t *g) {
     if (g == NULL)
         return NULL;
 
-    size_t maxLength = sizeof(char) * (g->height * (g->width + 1) + 1);
+    //-------
+//    char helper[32] = "";
+//    sprintf(helper, "%u", g->players);
+//    uint32_t numberLength = strlen(helper);
+//
+//    if (numberLength > 1)
+//        numberLength++;
+    uint32_t numberLength = fieldLength(g);
+    //-------
+
+    size_t maxLength = sizeof(char) * (g->height * (g->width * numberLength + 1) + 1);
     char *output = (char *) malloc(maxLength);
 
     if (output == NULL) {
@@ -260,24 +282,21 @@ char *gamma_board(gamma_t *g) {
     for (uint32_t y = g->height; y-- > 0;) { // prevent uint32_t flip
         for (uint32_t x = 0; x < g->width; x++) {
             if (isEmpty(g, x, y)) {
+                for (uint32_t i = 0; i < numberLength - 1; i++)
+                    output[length++] = ' ';
+
                 output[length++] = '.';
             }
             else {
                 sprintf(integerString, "%d", getOwner(g, x, y));
                 uint32_t len = strlen(integerString);
 
-                if (len == 1)
-                    output[length++] = integerString[0];
-                else { // player with id > 9
-                    maxLength += (1 + len) * sizeof(char);
-                    output = (char *) realloc(output, maxLength);
-                    if (output == NULL)
-                        return NULL;
-                    output[length++] = '[';
-                    memcpy(output + length, integerString, len);
-                    length += len;
-                    output[length++] = ']';
-                }
+                for (uint32_t i = 0; i < numberLength - len; i++)
+                    output[length++] = ' ';
+
+                memcpy(output + length, integerString, len);
+                length += len;
+
             }
         }
         output[length++] = '\n';
@@ -323,19 +342,22 @@ char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {
 
     // y * g->height + x
     // size_t len = x * g->width + y;
-    size_t len = y * (g->height + 1) + x;
+//    size_t len = y * (g->height + 1) + x;   // dziala przed uwzglednieniem dlugosci id gracza
+    uint32_t l = fieldLength(g);
+    size_t len = y * (g->width * l + 1) + x * l;
+
     memcpy(output, board, len);
 //    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
     memcpy(output + len, BACKGROUND_WHITE, 4);
 //    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
 
     // tutaj jakies get szerokosc najwieksza
-    memcpy(output + len + 4, board + len, 1);
+    memcpy(output + len + 4, board + len, l);
 //    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
 
-    memcpy(output + len + 4 + 1, COLOR_RESET, 4);
+    memcpy(output + len + 4 + l, COLOR_RESET, 4);
 //    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
-    memcpy(output + len + 4 + 1 + 4, board + len + 1, g->height * (g->width + 1) - len);
+    memcpy(output + len + 4 + l + 4, board + len + l, g->height * (g->width * l + 1) - len);
 //    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
 
     free(board);
