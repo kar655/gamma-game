@@ -108,34 +108,16 @@ bool initializeInteractive(uint32_t values[]) {
     return true;
 }
 
-//        clear
-//        printf("\e[1;1H\e[2J");
 
 static void gameLoop() {
-    int id = 0;
+    int id = 1;
     int ch = 1;
-    char *line;
-    char *playerInfo = nextPlayerInfo(game, &id);
     char *board;
-    uint32_t values[4];
 
-//    gamma_board(game);
-//
-//    printf("%s\n", nextPlayerInfo(game, &id));
+
     clear();
     printf("\e[?25l");  // no cursor
 
-//    while (ch) {
-//        board = gamma_board(game);
-//        if (board == NULL)
-//            return;
-//        printf("%s\n", board);
-//        free(board);
-//        printf("%s\n", nextPlayerInfo(game, &id));
-//        printf("wczytalem znak %i\n", ch);
-//        ch = getch();
-//        clear();
-//    }
 
     do {
         board = paintBoard(game, posX, posY);
@@ -144,19 +126,16 @@ static void gameLoop() {
         printf("%s\n", board);
         free(board);
 
-//        playerInfo = nextPlayerInfo(game, &id);
-//        if (playerInfo == NULL)
-//            return;
-        printf("%s\n", playerInfo);
-
+        printPlayerInfo(game, id);
 
         printf("wczytalem znak %i\n", ch);
         printf("id = %d \t\t posX = %u \t\t posY %u\n", id, posX, posY);
+
         ch = getch();
 //        ch = getchar();
+
         if (ch == 'c' || ch == 'C') {   // skip move
-            free(playerInfo);
-            playerInfo = nextPlayerInfo(game, &id);
+            id = nextPlayerId(game , id);
         }
         else if (isArrowKey(ch)) {
             ch = getch();
@@ -165,33 +144,21 @@ static void gameLoop() {
         }
         else if (ch == 32) {
             if (gamma_move(game, id, posX, posY)) { // flip y
-                free(playerInfo);
-                playerInfo = nextPlayerInfo(game, &id);
+                id = nextPlayerId(game, id);
             }
         }
         else if (ch == 71 || ch == 103) {
             if (gamma_golden_move(game, id, posX, posY)) {
-                free(playerInfo);
-                playerInfo =  nextPlayerInfo(game, &id);
+                id = nextPlayerId(game, id);
             }
         }
-//        if (playerInfo == NULL) // no one can't move
-//            break;
+
 
         clear();
-    } while (playerInfo != NULL && ch != 4);
+    } while (id != -1 && ch != 4);
 
     // enable cursor
     printf("\e[?25h");
-    free(playerInfo);
-//    while (true) {
-//        giveLine(&line);
-//
-//        return;
-//        switch (line[0]) {}
-//
-//    }
-
 
     board = gamma_board(game);//paintBoard(game, posX, posY);
     if (board == NULL)
@@ -199,7 +166,5 @@ static void gameLoop() {
     printf("%s\n", board);
     free(board);
 
-    char *summary = playersSummary(game);
-    printf("%s", summary);
-    free(summary);
+    allPlayersSummary(game);
 }

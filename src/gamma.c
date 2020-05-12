@@ -288,7 +288,8 @@ char *gamma_board(gamma_t *g) {
 }
 
 // -1 wszyscy nie moga sie ruszyc
-static int nextPlayerId(gamma_t *g, int last) {
+int nextPlayerId(gamma_t *g, int last) {
+
     uint32_t temp;
     for (uint32_t p = last; p < last + g->players; p++) {
         temp = p % g->players + 1;
@@ -299,32 +300,15 @@ static int nextPlayerId(gamma_t *g, int last) {
         }
     }
 
-//    for (int p = last % (int) g->players + 1; p != last;
-//         p = p % (int) g->players + 1) {
-//
-//        if (gamma_free_fields(g, p) > 0
-//            || gamma_golden_possible(g, p)) {
-//            return p;
-//        }
-//    }
 
     return -1;
 }
 
-char *nextPlayerInfo(gamma_t *g, int *last) {
-    *last = *last == 0 ? 1 : nextPlayerId(g, *last);
-
-    if (*last == -1)
-        return NULL;
-
-    // 'PLAYER {id} {busy_fields} {free_fields} {Golden Possible / nic}\n\0'
-    size_t length = 500;
-    char *output = malloc(length);
-    sprintf(output, "PLAYER %d %lu %lu %s", *last, gamma_busy_fields(g, *last),
-            gamma_free_fields(g, *last), gamma_golden_possible(g, *last) ? "G" : "");
-
-    return output;
+void printPlayerInfo(gamma_t *g, int id) {
+    printf("PLAYER %d %lu %lu%s\n", id, gamma_busy_fields(g, id),
+            gamma_free_fields(g, id), gamma_golden_possible(g, id) ? " G" : "");
 }
+
 // both length 4
 #define BACKGROUND_WHITE "\x1b[7m"
 #define COLOR_RESET "\x1b[0m"
@@ -366,42 +350,8 @@ inline uint32_t getHeight(gamma_t *g) {
     return g->height;
 }
 
-char *playerInfo(gamma_t *g) {
-
-}
-
-char *playersSummary(gamma_t *g) {
-    char *output = malloc(g->players * 11 + 1);
-    output[g->players * 11] = '\0';
-//    return NULL;
-    size_t length = 0;
-    size_t lineLenth = 0;
-    size_t maxLength = 0; //g->players * 11 + 1;
-    char idString[32] = "";
-    char fieldsString[32] = "";
-
-
-//    sprintf(integerString, "%d", getOwner(g, x, y));
-
-
-    // "PLAYER {id} {ownedFields}"
-    // 6 + 1 + id + 1 + ownedfield + 1
-    // na koncu + 1 za \o
+void allPlayersSummary(gamma_t *g) {
     for (uint32_t id = 1; id <= g->players; id++) {
-        sprintf(idString, "%u", id);
-        sprintf(fieldsString, "%lu", gamma_busy_fields(g, id));
-
-
-
-        memcpy(output + length, "PLAYER ", 7);
-        length += 7;
-        memcpy(output + length, idString, 1);
-        length += strlen(idString);
-        output[length++] = ' ';
-        memcpy(output + length, fieldsString, 1);
-        length += strlen(fieldsString);
-        output[length++] = '\n';
+        printf("PLAYER %u %lu\n", id, gamma_busy_fields(g, id));
     }
-
-    return output;
 }
