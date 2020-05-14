@@ -25,14 +25,14 @@ set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
 set(SOURCE_FILES
 
     src/gamma_main.c
-#    src/gamma_test.c
 
     src/findUnionLib/findUnion.c src/findUnionLib/findUnion.h
     src/playerLib/player.c src/playerLib/player.h
     src/gammaLib/gammaEngineLib.c src/gammaLib/gammaEngineLib.h
     src/gamma.c src/gamma.h
     src/inputParser/parser.c src/inputParser/parser.h
-    src/gameMode/batchMode.c src/gameMode/batchMode.h src/gameMode/interactiveMode.c src/gameMode/interactiveMode.h)
+    src/gameMode/batchMode.c src/gameMode/batchMode.h
+    src/gameMode/interactiveMode.c src/gameMode/interactiveMode.h)
 
 # Wskazujemy plik wykonywalny.
 add_executable(gamma ${SOURCE_FILES})

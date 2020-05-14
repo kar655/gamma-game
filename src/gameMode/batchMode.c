@@ -1,6 +1,3 @@
-//
-// Created by karol on 05/05/2020.
-//
 
 #include "batchMode.h"
 #include "../gamma.h"
@@ -20,7 +17,6 @@ bool initializeBatch(uint32_t values[]) {
 
     if (game == NULL)
         return false;
-//    return game != NULL;
 
     okMessage();
     gameLoop();
@@ -29,131 +25,71 @@ bool initializeBatch(uint32_t values[]) {
     return true;
 }
 
-
-//m player x y – wywołuje funkcję gamma_move,
-//g player x y – wywołuje funkcję gamma_golden_move,
-//b player – wywołuje funkcję gamma_busy_fields,
-//f player – wywołuje funkcję gamma_free_fields,
-//q player – wywołuje funkcję gamma_golden_possible,
-//p – wywołuje funkcję gamma_board.
-
-
 static void gameLoop() {
     char *line;
     uint32_t values[4];
-//    int num;
 
-    while (giveLine(&line) != -1) {
-//        giveLine(&line);
-//        num = readNumbers(values, line + 1, 3);
-//        case '#':
-//        case '\n':
-//        free(line);
-//        break;
-//        nextLine();
+    while (giveLine(&line)) {
+
+        // comment or new line
         if (line[0] == '#' || line[0] == '\n') {
             free(line);
-            nextLine();
             continue;
         }
 
-//        printf("len %lu    isspace %d\n", strlen(line), isspace(line[1]));
+        // no whitespace char after command
         if (strlen(line) > 1 && isspace(line[1]) == 0) {
             free(line);
             errorMessage();
             continue;
         }
 
-        switch (line[0]) {
-            case 'm':
-                if (readNumbers(values, line + 1, 3) == 3) {
-                    lineMessage(
-                            gamma_move(game, values[0], values[1], values[2])
-                    );
-                }
-                else {
-                    errorMessage();
-                }
-                free(line);
-                break;
-
-            case 'g':
-                if (readNumbers(values, line + 1, 3) == 3) {
-                    lineMessage(
-                            gamma_golden_move(game, values[0], values[1],
-                                              values[2])
-                    );
-                }
-                else {
-                    errorMessage();
-                }
-                free(line);
-                break;
-
-            case 'b':
-                if (readNumbers(values, line + 1, 1) == 1) {
-                    lineMessage(
-                            gamma_busy_fields(game, values[0])
-                    );
-                }
-                else {
-                    errorMessage();
-                }
-                free(line);
-                break;
-
-            case 'f':
-                if (readNumbers(values, line + 1, 1) == 1) {
-                    lineMessage(
-                            gamma_free_fields(game, values[0])
-                    );
-                }
-                else {
-                    errorMessage();
-                }
-                free(line);
-                break;
-
-            case 'q':   // todo powinnos sprawdzac czy jest odstep (spacja?)
-                if (readNumbers(values, line + 1, 1) == 1) {
-                    lineMessage(
-                            gamma_golden_possible(game, values[0])
-                    );
-                }
-                else {
-                    errorMessage();
-                }
-                free(line);
-                break;
-
-            case 'p':
-                if (readNumbers(values, line + 1, 0) == 0) {
-//                    printf("%s",gamma_board(game));
-//                    fflush(stdout);
-                    textMessage(gamma_board(game));
-                }
-                else {
-                    errorMessage();
-                }
-                free(line);
-                break;
-
-            case '/':
-                exit(2137);
-
-            case '#':
-            case '\n':
-                free(line);
-                nextLine();
-                break;
-
-            case 4:
-                break;
-
-            default:
-                free(line);
+        if (line[0] == 'm') {
+            if (readNumbers(values, line + 1, 3))
+                printf("%d\n",
+                       gamma_move(game, values[0], values[1], values[2]));
+            else
                 errorMessage();
         }
-    }
+        else if (line[0] == 'g') {
+            if (readNumbers(values, line + 1, 3))
+                printf("%d\n",
+                       gamma_golden_move(game, values[0], values[1], values[2]));
+            else
+                errorMessage();
+        }
+        else if (line[0] == 'b') {
+            if (readNumbers(values, line + 1, 1))
+                printf("%lu\n",
+                       gamma_busy_fields(game, values[0]));
+            else
+                errorMessage();
+        }
+        else if (line[0] == 'f') {
+            if (readNumbers(values, line + 1, 1))
+                printf("%lu\n",
+                       gamma_free_fields(game, values[0]));
+            else
+                errorMessage();
+        }
+        else if (line[0] == 'q') {
+            if (readNumbers(values, line + 1, 1))
+                printf("%d\n",
+                       gamma_golden_possible(game, values[0]));
+            else
+                errorMessage();
+        }
+        else if (line[0] == 'p') {
+            if (readNumbers(values, line + 1, 0))
+                textMessage(gamma_board(game));
+            else
+                errorMessage();
+        }
+        else
+            errorMessage();
 
+
+        free(line);
+        fflush(stdout);
+    }
 }

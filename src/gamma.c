@@ -248,6 +248,7 @@ uint32_t fieldLength(gamma_t *g) {
     char helper[32] = "";
     sprintf(helper, "%u", g->players);
     uint32_t numberLength = strlen(helper);
+//    uint32_t numberLength = (uint32_t) log10((double) g->players) + 1;
 
     if (numberLength > 1)
         numberLength++;
@@ -325,7 +326,7 @@ int nextPlayerId(gamma_t *g, int last) {
 
 void printPlayerInfo(gamma_t *g, int id) {
     printf("PLAYER %d %lu %lu%s\n", id, gamma_busy_fields(g, id),
-            gamma_free_fields(g, id), gamma_golden_possible(g, id) ? " G" : "");
+           gamma_free_fields(g, id), gamma_golden_possible(g, id) ? " G" : "");
 }
 
 // both length 4

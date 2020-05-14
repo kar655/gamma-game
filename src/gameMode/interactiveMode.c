@@ -1,6 +1,3 @@
-//
-// Created by karol on 06/05/2020.
-//
 
 #include <stddef.h>
 #include <stdio.h>
@@ -135,7 +132,7 @@ static void gameLoop() {
 //        ch = getchar();
 
         if (ch == 'c' || ch == 'C') {   // skip move
-            id = nextPlayerId(game , id);
+            id = nextPlayerId(game, id);
         }
         else if (isArrowKey(ch)) {
             ch = getch();
@@ -143,7 +140,7 @@ static void gameLoop() {
             ch = 0;
         }
         else if (ch == 32) {
-            if (gamma_move(game, id, posX, posY)) { // flip y
+            if (gamma_move(game, id, posX, posY)) {
                 id = nextPlayerId(game, id);
             }
         }
@@ -160,7 +157,7 @@ static void gameLoop() {
     // enable cursor
     printf("\e[?25h");
 
-    board = gamma_board(game);//paintBoard(game, posX, posY);
+    board = gamma_board(game);
     if (board == NULL)
         return;
     printf("%s\n", board);
