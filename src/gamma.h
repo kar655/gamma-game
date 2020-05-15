@@ -111,9 +111,9 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player);
  */
 char* gamma_board(gamma_t *g);
 
-int nextPlayerId(gamma_t *g, int last);
+uint32_t nextPlayerId(gamma_t *g, uint32_t last);
 
-void printPlayerInfo(gamma_t *g, int id);
+void printPlayerInfo(gamma_t *g, uint32_t id);
 
 char* paintBoard(gamma_t *g, uint32_t x, uint32_t y);
 

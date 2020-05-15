@@ -308,7 +308,7 @@ char *gamma_board(gamma_t *g) {
 }
 
 // -1 wszyscy nie moga sie ruszyc
-int nextPlayerId(gamma_t *g, int last) {
+uint32_t nextPlayerId(gamma_t *g, uint32_t last) {
 
     uint32_t temp;
     for (uint32_t p = last; p < last + g->players; p++) {
@@ -321,11 +321,11 @@ int nextPlayerId(gamma_t *g, int last) {
     }
 
 
-    return -1;
+    return 0;
 }
 
-void printPlayerInfo(gamma_t *g, int id) {
-    printf("PLAYER %d %lu %lu%s\n", id, gamma_busy_fields(g, id),
+void printPlayerInfo(gamma_t *g, uint32_t id) {
+    printf("PLAYER %u %lu %lu%s\n", id, gamma_busy_fields(g, id),
            gamma_free_fields(g, id), gamma_golden_possible(g, id) ? " G" : "");
 }
 
@@ -338,7 +338,7 @@ char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {
     // output = (char *) realloc(output, strlen(output) + 14);
 
     char *board = gamma_board(g);
-    char *output = malloc(strlen(board) + 15);  // 2 * 7 + 1
+    char *output = malloc(strlen(board) + 9);  // 2 * 4 + 1
     y = g->height - y - 1; // flip y
 
     // y * g->height + x
