@@ -23,18 +23,6 @@ gamma_t *game;
  */
 static void gameLoop();
 
-bool initializeBatch(uint32_t values[]) {
-    game = gamma_new(values[0], values[1], values[2], values[3]);
-
-    if (game == NULL)
-        return false;
-
-    okMessage();
-    gameLoop();
-
-    gamma_delete(game);
-    return true;
-}
 
 static void gameLoop() {
     char *line;
@@ -48,12 +36,6 @@ static void gameLoop() {
             continue;
         }
 
-        // no whitespace char after command
-        if (strlen(line) > 1 && isspace(line[1]) == 0) {
-            free(line);
-            errorMessage();
-            continue;
-        }
 
         if (line[0] == 'm') {
             if (readNumbers(values, line + 1, 3))
@@ -103,4 +85,17 @@ static void gameLoop() {
         free(line);
         fflush(stdout);
     }
+}
+
+bool initializeBatch(uint32_t values[]) {
+    game = gamma_new(values[0], values[1], values[2], values[3]);
+
+    if (game == NULL)
+        return false;
+
+    okMessage();
+    gameLoop();
+
+    gamma_delete(game);
+    return true;
 }

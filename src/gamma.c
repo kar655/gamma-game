@@ -8,12 +8,18 @@
 #include "gamma.h"
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
 
 /**
  * Maximal number of golden moves of one player
  */
 #define NUM_GOLDEN_MOVES 1
+
+/** Sets background color to white */
+#define BACKGROUND_WHITE "\x1b[7m"
+
+/** Sets background color to default */
+#define COLOR_RESET "\x1b[0m"
+
 
 /** @brief Free @p g, @p members, @p board.
  * @param g - current game
@@ -244,41 +250,14 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player) {
            != (uint64_t) g->width * (uint64_t) g->height;
 }
 
-/** @brief Calculates length of biggest possible field.
- * Check maximum player's id and calculates field length
- * @param g - current game
- * @return length of field
- */
-uint32_t fieldLength(gamma_t *g);
-
-
-uint32_t fieldLength(gamma_t *g) {
-    char helper[32] = "";
-    sprintf(helper, "%u", g->players);
-    uint32_t numberLength = strlen(helper);
-//    uint32_t numberLength = (uint32_t) log10((double) g->players) + 1;
-
-    if (numberLength > 1)
-        numberLength++;
-
-    return numberLength;
-}
-
 char *gamma_board(gamma_t *g) {
     if (g == NULL)
         return NULL;
 
-    //-------
-//    char helper[32] = "";
-//    sprintf(helper, "%u", g->players);
-//    uint32_t numberLength = strlen(helper);
-//
-//    if (numberLength > 1)
-//        numberLength++;
     uint32_t numberLength = fieldLength(g);
-    //-------
 
-    size_t maxLength = sizeof(char) * (g->height * (g->width * numberLength + 1) + 1);
+    size_t maxLength = sizeof(char) *
+                       (g->height * (g->width * numberLength + 1) + 1);
     char *output = (char *) malloc(maxLength);
 
     if (output == NULL) {
@@ -305,7 +284,6 @@ char *gamma_board(gamma_t *g) {
 
                 memcpy(output + length, integerString, len);
                 length += len;
-
             }
         }
         output[length++] = '\n';
@@ -316,8 +294,8 @@ char *gamma_board(gamma_t *g) {
 }
 
 uint32_t nextPlayerId(gamma_t *g, uint32_t last) {
-
     uint32_t temp;
+
     for (uint32_t p = last; p < last + g->players; p++) {
         temp = p % g->players + 1;
 
@@ -327,7 +305,6 @@ uint32_t nextPlayerId(gamma_t *g, uint32_t last) {
         }
     }
 
-
     return 0;
 }
 
@@ -336,41 +313,23 @@ void printPlayerInfo(gamma_t *g, uint32_t id) {
            gamma_free_fields(g, id), gamma_golden_possible(g, id) ? " G" : "");
 }
 
-// both length 4
-
-/** Sets background color to white */
-#define BACKGROUND_WHITE "\x1b[7m"
-
-/** Sets background color to default */
-#define COLOR_RESET "\x1b[0m"
-
 char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {
-    // char *output = gamma_board(g);
-    // output = (char *) realloc(output, strlen(output) + 14);
-
+    // todo - out of memeory?
     char *board = gamma_board(g);
-    char *output = malloc(strlen(board) + 9);  // 2 * 4 + 1
+    char *output = malloc(strlen(board) + 9); // 2 * 4 + 1; colors + \0
     y = g->height - y - 1; // flip y
 
-    // y * g->height + x
-    // size_t len = x * g->width + y;
-//    size_t len = y * (g->height + 1) + x;   // dziala przed uwzglednieniem dlugosci id gracza
     uint32_t l = fieldLength(g);
-    size_t len = y * (g->width * l + 1) + x * l;
+    size_t len = y * (g->width * l + 1) + x * l; // length to special field
 
     memcpy(output, board, len);
-//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
     memcpy(output + len, BACKGROUND_WHITE, 4);
-//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
 
-    // tutaj jakies get szerokosc najwieksza
     memcpy(output + len + 4, board + len, l);
-//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
 
     memcpy(output + len + 4 + l, COLOR_RESET, 4);
-//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
-    memcpy(output + len + 4 + l + 4, board + len + l, g->height * (g->width * l + 1) - len);
-//    printf("DEBUG INFO. output = %s    DLUGOSC: %lu\n\n", output, strlen(output));
+    memcpy(output + len + 4 + l + 4,
+           board + len + l, g->height * (g->width * l + 1) - len);
 
     free(board);
     return output;

@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <ctype.h>
 
 /**
  * Line number counter.
@@ -98,6 +99,9 @@ inline void errorMessage() {
 bool readNumbers(uint32_t values[], char *str, int expectingValues) {
     uint64_t result;
     char *endPtr;
+
+    if (strlen(str) == 0 || isspace(str[0]) == 0) // no free space
+        return false;
 
     for (int num = 0; num < expectingValues; num++) {
 

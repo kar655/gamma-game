@@ -135,8 +135,18 @@ void printPlayerInfo(gamma_t *g, uint32_t id);
  */
 char* paintBoard(gamma_t *g, uint32_t x, uint32_t y);
 
+/** @brief Return game width.
+ * return gamma game @p g width
+ * @param g - current game
+ * @return game width
+ */
 uint32_t getWidth(gamma_t *g);
 
+/** @brief Return game height.
+ * return gamma game @p g height
+ * @param g - current game
+ * @return game height
+ */
 uint32_t getHeight(gamma_t *g);
 
 /** @brief Prints short summary for every player.

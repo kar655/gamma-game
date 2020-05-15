@@ -5,6 +5,8 @@
  */
 
 #include "gammaEngineLib.h"
+#include <string.h>
+#include <stdio.h>
 
 /** @brief Builds connections of fields.
  * Build areas of fields owned by @p id player starting from Node @p center
@@ -332,4 +334,16 @@ void buildConnected(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     buildArea(g, getUp(g, x, y), getUp(g, x, y), player);
     buildArea(g, getRight(g, x, y), getRight(g, x, y), player);
     buildArea(g, getDown(g, x, y), getDown(g, x, y), player);
+}
+
+uint32_t fieldLength(gamma_t *g) {
+    char helper[32] = "";
+    sprintf(helper, "%u", g->players);
+    uint32_t numberLength = strlen(helper);
+
+    // one extra free space
+    if (numberLength > 1)
+        numberLength++;
+
+    return numberLength;
 }

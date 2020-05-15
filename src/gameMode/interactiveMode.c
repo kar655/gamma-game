@@ -14,6 +14,19 @@
 #include "../gamma.h"
 #include "../inputParser/parser.h"
 
+
+/**
+ * Current gamma game
+ */
+gamma_t *game;
+
+/** first coordinate of special field */
+uint32_t posX;
+
+/** second coordinate of special field */
+uint32_t posY;
+
+
 /**
  * Clears console.
  */
@@ -38,9 +51,12 @@ static uint32_t processChar(char ch, uint32_t id);
  */
 static void gameLoop();
 
-
-// TODO -- skopiowac link do stacka lub zaminic?
-char getch() {
+/** @brief Reads character from input.
+ * COPIED FROM:
+ * <https://stackoverflow.com/questions/421860/capture-characters-from-standard-input-without-waiting-for-enter-to-be-pressed>
+ * @return read character
+ */
+static char getch() {
     char buf = 0;
     struct termios old = {0};
     if (tcgetattr(0, &old) < 0)
@@ -64,18 +80,6 @@ static inline void clear() {
     printf("\e[1;1H\e[2J");
 }
 
-/**
- * Current gamma game
- */
-gamma_t *game;
-
-/** first coordinate of special field */
-uint32_t posX;
-
-/** second coordinate of special field */
-uint32_t posY;
-
-
 static void move(int num) {
     if (num == 65) // up
         posY = (posY + 1) == getHeight(game) ? posY : posY + 1;
@@ -87,25 +91,7 @@ static void move(int num) {
         posX = posX == 0 ? 0 : posX - 1;
 }
 
-bool initializeInteractive(uint32_t values[]) {
-    game = gamma_new(values[0], values[1], values[2], values[3]);
-
-    if (game == NULL)
-        return false;
-
-    posX = (values[0] - 1) / 2;
-    posY = (values[1] - 1) / 2;
-
-    okMessage();
-    gameLoop();
-
-    gamma_delete(game);
-    return true;
-}
-
 static uint32_t processChar(char ch, uint32_t id) {
-    // todo albo po prostu return id jak nie strzalka
-    // minusy dodatkowe generowanie gamma board
     if (ch == 'c' || ch == 'C') {   // skip move
         id = nextPlayerId(game, id);
     }
@@ -133,15 +119,15 @@ static uint32_t processChar(char ch, uint32_t id) {
             id = nextPlayerId(game, id);
         }
     }
-    else if (ch == 4)
-        id = 0;    // EOF
+    else if (ch == 4) // EOF
+        id = 0;
 
     return id;
 }
 
 static void gameLoop() {
     uint32_t id = 1;
-    int ch;
+    char ch;
     char *board;
 
     clear();
@@ -156,7 +142,6 @@ static void gameLoop() {
         printPlayerInfo(game, id);
 
         ch = getch();
-//        ch = getchar();
         id = processChar(ch, id);
 
         clear();
@@ -171,4 +156,20 @@ static void gameLoop() {
 
     textMessage(board);
     allPlayersSummary(game);
+}
+
+bool initializeInteractive(uint32_t values[]) {
+    game = gamma_new(values[0], values[1], values[2], values[3]);
+
+    if (game == NULL)
+        return false;
+
+    posX = (values[0] - 1) / 2;
+    posY = (values[1] - 1) / 2;
+
+    okMessage();
+    gameLoop();
+
+    gamma_delete(game);
+    return true;
 }
