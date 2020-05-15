@@ -1,3 +1,8 @@
+/** @file
+ * Interactive mode implementation
+ *
+ * @author Karol Zagródka <karol.zagrodka@gmail.com>
+ */
 
 #include <stddef.h>
 #include <stdio.h>
@@ -9,9 +14,32 @@
 #include "../gamma.h"
 #include "../inputParser/parser.h"
 
-
+/**
+ * Clears console.
+ */
 static void clear();
 
+/** @brief Moves special field.
+ * Changes positon of special field base on which arrow key was pressed
+ * @param num - last character of arrow key pressed
+ */
+static void move(int num);
+
+/** @brief Process pressed key.
+ * Recognize arrow keys pressed or action keys
+ * @param ch - pressed key
+ * @param id - current player id.
+ * @return id of player after pressed key or 0 if EOF or everyone can't move
+ */
+static uint32_t processChar(char ch, uint32_t id);
+
+/** @brief Plays game in Interactive Mode
+ * Read characters and prints results.
+ */
+static void gameLoop();
+
+
+// TODO -- skopiowac link do stacka lub zaminic?
 char getch() {
     char buf = 0;
     struct termios old = {0};
@@ -36,8 +64,15 @@ static inline void clear() {
     printf("\e[1;1H\e[2J");
 }
 
+/**
+ * Current gamma game
+ */
 gamma_t *game;
+
+/** first coordinate of special field */
 uint32_t posX;
+
+/** second coordinate of special field */
 uint32_t posY;
 
 
@@ -51,9 +86,6 @@ static void move(int num) {
     else if (num == 68) // left
         posX = posX == 0 ? 0 : posX - 1;
 }
-
-
-static void gameLoop();
 
 bool initializeInteractive(uint32_t values[]) {
     game = gamma_new(values[0], values[1], values[2], values[3]);

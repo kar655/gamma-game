@@ -1,4 +1,10 @@
+/** @file
+ * Implementation of input parser
+ *
+ * @author Karol Zagródka <karol.zagrodka@gmail.com>
+ */
 
+/** Enables getline */
 #define _XOPEN_SOURCE 700
 
 #include "parser.h"
@@ -11,8 +17,64 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
+/**
+ * Line number counter.
+ */
 int lineNumber = 0;
+
+/** @brief Check if number is correct.
+ * Check if @p num fits in uint32_t
+ * @param num - checked number
+ * @return true if number fits else false
+ */
+static bool correctNumber(uint64_t num);
+
+/** @brief Tries to chose and launch game mode.
+ * Read single line by giveLine and tries to play game.
+ * @return true if game was played or EOF else false
+ */
+static bool gameSuccess();
+
+static inline bool correctNumber(uint64_t num) {
+    return num <= UINT32_MAX;
+}
+
+static bool gameSuccess() {
+
+    char *instructions;
+    uint32_t values[4];
+
+    if (!giveLine(&instructions))
+        return true;
+
+    // comment or new line
+    if (instructions[0] == '#' || instructions[0] == '\n') {
+        free(instructions);
+        return false;
+    }
+
+    if ((instructions[0] == 'B' || instructions[0] == 'I')
+        && readNumbers(values, instructions + 1, 4)) {
+        if (instructions[0] == 'B') {
+            // batch mode with values
+            if (initializeBatch(values)) {
+                free(instructions);
+                return true; // game completed
+            }
+        }
+        else {
+            // interactive mode with values
+            if (initializeInteractive(values)) {
+                free(instructions);
+                return true; // game completed
+            }
+        }
+    }
+
+    free(instructions);
+    errorMessage();
+    return false;
+}
 
 void textMessage(char *str) {
     if (str == NULL) {
@@ -31,10 +93,6 @@ inline void okMessage() {
 
 inline void errorMessage() {
     fprintf(stderr, "ERROR %d\n", lineNumber);
-}
-
-static inline bool correctNumber(uint64_t num) {
-    return num <= UINT32_MAX;
 }
 
 bool readNumbers(uint32_t values[], char *str, int expectingValues) {
@@ -73,43 +131,6 @@ bool giveLine(char **str) {
 
     *str = instructions;
     return true;
-}
-
-static bool gameSuccess() {
-
-    char *instructions;
-    uint32_t values[4];
-
-    if (!giveLine(&instructions))
-        return true;
-
-    // comment or new line
-    if (instructions[0] == '#' || instructions[0] == '\n') {
-        free(instructions);
-        return false;
-    }
-
-    if ((instructions[0] == 'B' || instructions[0] == 'I')
-        && readNumbers(values, instructions + 1, 4)) {
-        if (instructions[0] == 'B') {
-            // batch mode with values
-            if (initializeBatch(values)) {
-                free(instructions);
-                return true; // game completed
-            }
-        }
-        else {
-            // interactive mode with values
-            if (initializeInteractive(values)) {
-                free(instructions);
-                return true; // game completed
-            }
-        }
-    }
-
-    free(instructions);
-    errorMessage();
-    return false;
 }
 
 void playGame() {

@@ -244,6 +244,14 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player) {
            != (uint64_t) g->width * (uint64_t) g->height;
 }
 
+/** @brief Calculates length of biggest possible field.
+ * Check maximum player's id and calculates field length
+ * @param g - current game
+ * @return length of field
+ */
+uint32_t fieldLength(gamma_t *g);
+
+
 uint32_t fieldLength(gamma_t *g) {
     char helper[32] = "";
     sprintf(helper, "%u", g->players);
@@ -307,7 +315,6 @@ char *gamma_board(gamma_t *g) {
     return output;
 }
 
-// -1 wszyscy nie moga sie ruszyc
 uint32_t nextPlayerId(gamma_t *g, uint32_t last) {
 
     uint32_t temp;
@@ -330,7 +337,11 @@ void printPlayerInfo(gamma_t *g, uint32_t id) {
 }
 
 // both length 4
+
+/** Sets background color to white */
 #define BACKGROUND_WHITE "\x1b[7m"
+
+/** Sets background color to default */
 #define COLOR_RESET "\x1b[0m"
 
 char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {

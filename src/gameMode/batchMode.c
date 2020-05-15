@@ -1,3 +1,8 @@
+/** @file
+ * Batch mode implementation
+ *
+ * @author Karol Zagródka <karol.zagrodka@gmail.com>
+ */
 
 #include "batchMode.h"
 #include "../gamma.h"
@@ -8,8 +13,14 @@
 #include <ctype.h>
 #include <string.h>
 
+/**
+ * Current gamma game
+ */
 gamma_t *game;
 
+/** @brief Plays game in Batch Mode
+ * Reads lines and prints results.
+ */
 static void gameLoop();
 
 bool initializeBatch(uint32_t values[]) {

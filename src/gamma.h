@@ -111,18 +111,38 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player);
  */
 char* gamma_board(gamma_t *g);
 
+/** @brief Id of next player in current game.
+ * Id of player after @p last in game @p g who can make move
+ * @param g - current game
+ * @param last - id of player who moved last
+ * @return id of next player or 0 if everyone can't move
+ */
 uint32_t nextPlayerId(gamma_t *g, uint32_t last);
 
+/** @brief Prints summary of player.
+ * Prints line with information about player with id @p id
+ * @param g - current game
+ * @param id - player's id
+ */
 void printPlayerInfo(gamma_t *g, uint32_t id);
 
+/** @brief Build gamma_board with special field.
+ * Set background color of field at (@p x, @p y) to white
+ * @param g - current game
+ * @param x - first coordinate
+ * @param y - second coordinate
+ * @return string with painted board
+ */
 char* paintBoard(gamma_t *g, uint32_t x, uint32_t y);
 
 uint32_t getWidth(gamma_t *g);
 
 uint32_t getHeight(gamma_t *g);
 
-char* playersSummary(gamma_t *g);
-
+/** @brief Prints short summary for every player.
+ * Prints players' ids and gamma_busy_field in new lines
+ * @param g - current game
+ */
 void allPlayersSummary(gamma_t *g);
 
 #endif /* GAMMA_H */
