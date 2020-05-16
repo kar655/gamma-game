@@ -134,10 +134,9 @@ static void gameLoop() {
     printf("\e[?25l");  // no cursor
 
     while (id != 0) {
-        board = paintBoard(game, posX, posY);
-        if (board == NULL)
-            return;
-        textMessage(board);
+//        board = paintBoard(game, posX, posY);
+//        textMessage(board);
+        paintBoard(game, posX, posY);
 
         printPlayerInfo(game, id);
 
@@ -151,10 +150,8 @@ static void gameLoop() {
     printf("\e[?25h");
 
     board = gamma_board(game);
-    if (board == NULL)
-        return;
-
     textMessage(board);
+
     allPlayersSummary(game);
 }
 

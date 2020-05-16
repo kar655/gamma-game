@@ -314,25 +314,33 @@ void printPlayerInfo(gamma_t *g, uint32_t id) {
 }
 
 char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {
-    // todo - out of memeory?
-    char *board = gamma_board(g);
-    char *output = malloc(strlen(board) + 9); // 2 * 4 + 1; colors + \0
+//    char *board = gamma_board(g);
+//    char *output = malloc(strlen(board) + 9); // 2 * 4 + 1; colors + \0
     y = g->height - y - 1; // flip y
-
+//
     uint32_t l = fieldLength(g);
-    size_t len = y * (g->width * l + 1) + x * l; // length to special field
+    uint64_t len = y * (g->width * l + 1) + x * l; // length to special field
+//
+//    memcpy(output, board, len);
+//    memcpy(output + len, BACKGROUND_WHITE, 4);
+//
+//    memcpy(output + len + 4, board + len, l);
+//
+//    memcpy(output + len + 4 + l, COLOR_RESET, 4);
+//    memcpy(output + len + 4 + l + 4,
+//           board + len + l, g->height * (g->width * l + 1) - len);
+//
+//    free(board);
+//    return output;
 
-    memcpy(output, board, len);
-    memcpy(output + len, BACKGROUND_WHITE, 4);
+    char *board = gamma_board(g);
 
-    memcpy(output + len + 4, board + len, l);
-
-    memcpy(output + len + 4 + l, COLOR_RESET, 4);
-    memcpy(output + len + 4 + l + 4,
-           board + len + l, g->height * (g->width * l + 1) - len);
+    printf("%.*s", len, board);
+    printf("%s%.*s%s", BACKGROUND_WHITE, l, board + len, COLOR_RESET);
+    printf("%.*s", g->height * (g->width * l + 1) - len, board + len + l);
 
     free(board);
-    return output;
+    return NULL;
 }
 
 inline uint32_t getWidth(gamma_t *g) {
