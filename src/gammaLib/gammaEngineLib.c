@@ -314,7 +314,7 @@ void clearRelations(gamma_t *g, Node *elem, uint32_t id) {
     }
 }
 
-void buildArea(gamma_t *g, Node *center, Node *elem, uint32_t id) {
+static void buildArea(gamma_t *g, Node *center, Node *elem, uint32_t id) {
     if (elem == NULL)
         return;
     // was deleted before or connects to other area
@@ -334,16 +334,4 @@ void buildConnected(gamma_t *g, uint32_t player, uint32_t x, uint32_t y) {
     buildArea(g, getUp(g, x, y), getUp(g, x, y), player);
     buildArea(g, getRight(g, x, y), getRight(g, x, y), player);
     buildArea(g, getDown(g, x, y), getDown(g, x, y), player);
-}
-
-uint32_t fieldLength(gamma_t *g) {
-    char helper[32] = "";
-    sprintf(helper, "%u", g->players);
-    uint32_t numberLength = strlen(helper);
-
-    // one extra free space
-    if (numberLength > 1)
-        numberLength++;
-
-    return numberLength;
 }

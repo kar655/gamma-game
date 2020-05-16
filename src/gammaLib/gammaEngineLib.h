@@ -212,12 +212,4 @@ void clearRelations(gamma_t *g, Node *elem, uint32_t id);
  */
 void buildConnected(gamma_t *g, uint32_t player, uint32_t x, uint32_t y);
 
-/** @brief Calculates length of biggest possible field.
- * Check maximum player's id and calculates field length
- * @param g - current game
- * @return length of field
- */
-uint32_t fieldLength(gamma_t *g);
-
-
 #endif //GAMMA_GAMMAENGINELIB_H

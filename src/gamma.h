@@ -28,7 +28,7 @@ typedef struct gamma gamma_t;
  * @return Wskaźnik na utworzoną strukturę lub NULL, gdy nie udało się
  * zaalokować pamięci lub któryś z parametrów jest niepoprawny.
  */
-gamma_t* gamma_new(uint32_t width, uint32_t height,
+gamma_t *gamma_new(uint32_t width, uint32_t height,
                    uint32_t players, uint32_t areas);
 
 /** @brief Usuwa strukturę przechowującą stan gry.
@@ -109,7 +109,7 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player);
  * @return Wskaźnik na zaalokowany bufor zawierający napis opisujący stan
  * planszy lub NULL, jeśli nie udało się zaalokować pamięci.
  */
-char* gamma_board(gamma_t *g);
+char *gamma_board(gamma_t *g);
 
 /** @brief Id of next player in current game.
  * Id of player after @p last in game @p g who can make move
@@ -126,14 +126,14 @@ uint32_t nextPlayerId(gamma_t *g, uint32_t last);
  */
 void printPlayerInfo(gamma_t *g, uint32_t id);
 
-/** @brief Build gamma_board with special field.
- * Set background color of field at (@p x, @p y) to white
+/** @brief Generates string of field.
+ * Generates string of field at (@p x, @p y)
  * @param g - current game
  * @param x - first coordinate
  * @param y - second coordinate
- * @return string with painted board
+ * @return view of that field
  */
-char* paintBoard(gamma_t *g, uint32_t x, uint32_t y);
+char *updateField(gamma_t *g, uint32_t x, uint32_t y);
 
 /** @brief Return game width.
  * return gamma game @p g width
@@ -154,5 +154,12 @@ uint32_t getHeight(gamma_t *g);
  * @param g - current game
  */
 void allPlayersSummary(gamma_t *g);
+
+/** @brief Calculates length of biggest possible field.
+ * Check maximum player's id and calculates field length
+ * @param g - current game
+ * @return length of field
+ */
+uint32_t fieldLength(gamma_t *g);
 
 #endif /* GAMMA_H */

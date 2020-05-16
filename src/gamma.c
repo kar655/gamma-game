@@ -14,12 +14,6 @@
  */
 #define NUM_GOLDEN_MOVES 1
 
-/** Sets background color to white */
-#define BACKGROUND_WHITE "\x1b[7m"
-
-/** Sets background color to default */
-#define COLOR_RESET "\x1b[0m"
-
 
 /** @brief Free @p g, @p members, @p board.
  * @param g - current game
@@ -313,34 +307,31 @@ void printPlayerInfo(gamma_t *g, uint32_t id) {
            gamma_free_fields(g, id), gamma_golden_possible(g, id) ? " G" : "");
 }
 
-char *paintBoard(gamma_t *g, uint32_t x, uint32_t y) {
-//    char *board = gamma_board(g);
-//    char *output = malloc(strlen(board) + 9); // 2 * 4 + 1; colors + \0
-    y = g->height - y - 1; // flip y
-//
-    uint32_t l = fieldLength(g);
-    uint64_t len = y * (g->width * l + 1) + x * l; // length to special field
-//
-//    memcpy(output, board, len);
-//    memcpy(output + len, BACKGROUND_WHITE, 4);
-//
-//    memcpy(output + len + 4, board + len, l);
-//
-//    memcpy(output + len + 4 + l, COLOR_RESET, 4);
-//    memcpy(output + len + 4 + l + 4,
-//           board + len + l, g->height * (g->width * l + 1) - len);
-//
-//    free(board);
-//    return output;
+char *updateField(gamma_t *g, uint32_t x, uint32_t y) {
+    uint32_t length = 0;
+    char integerString[32] = "";
 
-    char *board = gamma_board(g);
+    uint32_t fl = fieldLength(g);
+    char *output = malloc(fl + 1);
 
-    printf("%.*s", len, board);
-    printf("%s%.*s%s", BACKGROUND_WHITE, l, board + len, COLOR_RESET);
-    printf("%.*s", g->height * (g->width * l + 1) - len, board + len + l);
+    if (isEmpty(g, x, y)) {
+        for (uint32_t i = 0; i < fl - 1; i++)
+            output[length++] = ' ';
 
-    free(board);
-    return NULL;
+        output[length] = '.';
+    }
+    else {
+        sprintf(integerString, "%d", getOwner(g, x, y));
+        uint32_t len = strlen(integerString);
+
+        for (uint32_t i = 0; i < fl - len; i++)
+            output[length++] = ' ';
+
+        memcpy(output + length, integerString, len);
+    }
+
+    output[fl] = '\0';
+    return output;
 }
 
 inline uint32_t getWidth(gamma_t *g) {
@@ -355,4 +346,16 @@ void allPlayersSummary(gamma_t *g) {
     for (uint32_t id = 1; id <= g->players; id++) {
         printf("PLAYER %u %lu\n", id, gamma_busy_fields(g, id));
     }
+}
+
+uint32_t fieldLength(gamma_t *g) {
+    char helper[32] = "";
+    sprintf(helper, "%u", g->players);
+    uint32_t numberLength = strlen(helper);
+
+    // one extra free space
+    if (numberLength > 1)
+        numberLength++;
+
+    return numberLength;
 }

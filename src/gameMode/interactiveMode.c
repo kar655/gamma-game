@@ -14,23 +14,17 @@
 #include "../gamma.h"
 #include "../inputParser/parser.h"
 
-
 /**
  * Current gamma game
  */
 gamma_t *game;
 
-/** first coordinate of special field */
+/** First coordinate of special field */
 uint32_t posX;
 
-/** second coordinate of special field */
+/** Second coordinate of special field */
 uint32_t posY;
 
-
-/**
- * Clears console.
- */
-static void clear();
 
 /** @brief Moves special field.
  * Changes positon of special field base on which arrow key was pressed
@@ -76,10 +70,6 @@ static char getch() {
     return (buf);
 }
 
-static inline void clear() {
-    printf("\e[1;1H\e[2J");
-}
-
 static void move(int num) {
     if (num == 65) // up
         posY = (posY + 1) == getHeight(game) ? posY : posY + 1;
@@ -109,12 +99,12 @@ static uint32_t processChar(char ch, uint32_t id) {
             id = processChar(ch, id);
         }
     }
-    else if (ch == 32) {
+    else if (ch == 32) { // space
         if (gamma_move(game, id, posX, posY)) {
             id = nextPlayerId(game, id);
         }
     }
-    else if (ch == 71 || ch == 103) {
+    else if (ch == 'g' || ch == 'G') {
         if (gamma_golden_move(game, id, posX, posY)) {
             id = nextPlayerId(game, id);
         }
@@ -127,44 +117,56 @@ static uint32_t processChar(char ch, uint32_t id) {
 
 static void gameLoop() {
     uint32_t id = 1;
-    char ch;
-    char *board;
+    uint32_t fl = fieldLength(game);
 
-    clear();
-    printf("\e[?25l");  // no cursor
+    printPlayerInfo(game, id);
+
+    // cursor to end of current field
+    printf("\e[%d;%dH", getHeight(game) - posY, fl * (posX + 1));
 
     while (id != 0) {
-//        board = paintBoard(game, posX, posY);
-//        textMessage(board);
-        paintBoard(game, posX, posY);
+
+        fflush(stdout);
+        id = processChar(getch(), id);
+
+        // cursor to beginning of current field
+        printf("\e[%d;%dH", getHeight(game) - posY, fl * posX + 1);
+
+        textMessage(updateField(game, posX, posY));
+
+        // remove last line
+        printf("\e[%d;%dH\e[2K", getHeight(game) + 1, 0);
 
         printPlayerInfo(game, id);
 
-        ch = getch();
-        id = processChar(ch, id);
-
-        clear();
+        // cursor to end of current field
+        printf("\e[%d;%dH", getHeight(game) - posY, fl * (posX + 1));
     }
 
-    // enable cursor
-    printf("\e[?25h");
-
-    board = gamma_board(game);
-    textMessage(board);
-
+    // remove last line
+    printf("\e[%d;%dH\e[2K", getHeight(game) + 1, 0);
     allPlayersSummary(game);
 }
 
 bool initializeInteractive(uint32_t values[]) {
     game = gamma_new(values[0], values[1], values[2], values[3]);
+    char *board = gamma_board(game);
 
-    if (game == NULL)
+    if (game == NULL || board == NULL) {
+        gamma_delete(game);
         return false;
+    }
 
     posX = (values[0] - 1) / 2;
     posY = (values[1] - 1) / 2;
 
     okMessage();
+
+    // one line down and clear
+    printf("\eE\e[2J\e[1;1H");
+
+    textMessage(board);
+
     gameLoop();
 
     gamma_delete(game);
