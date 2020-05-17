@@ -4,15 +4,17 @@
  * @author Karol Zagródka <karol.zagrodka@gmail.com>
  */
 
+#include "interactiveMode.h"
+#include "../gamma.h"
+#include "../inputParser/parser.h"
+
 #include <stddef.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include <unistd.h>
 #include <termio.h>
 
-#include "interactiveMode.h"
-#include "../gamma.h"
-#include "../inputParser/parser.h"
 
 /**
  * Current gamma game
@@ -122,7 +124,7 @@ static void gameLoop() {
     printPlayerInfo(game, id);
 
     // cursor to end of current field
-    printf("\e[%d;%dH", getHeight(game) - posY, fl * (posX + 1));
+    printf("\e[%"PRIu32";%"PRIu32"H", getHeight(game) - posY, fl * (posX + 1));
 
     while (id != 0) {
 
@@ -130,21 +132,21 @@ static void gameLoop() {
         id = processChar(getch(), id);
 
         // cursor to beginning of current field
-        printf("\e[%d;%dH", getHeight(game) - posY, fl * posX + 1);
+        printf("\e[%"PRIu32";%"PRIu32"H", getHeight(game) - posY, fl * posX + 1);
 
         textMessage(updateField(game, posX, posY));
 
         // remove last line
-        printf("\e[%d;%dH\e[2K", getHeight(game) + 1, 0);
+        printf("\e[%"PRIu32";0H\e[2K", getHeight(game) + 1);
 
         printPlayerInfo(game, id);
 
         // cursor to end of current field
-        printf("\e[%d;%dH", getHeight(game) - posY, fl * (posX + 1));
+        printf("\e[%"PRIu32";%"PRIu32"H", getHeight(game) - posY, fl * (posX + 1));
     }
 
     // remove last line
-    printf("\e[%d;%dH\e[2K", getHeight(game) + 1, 0);
+    printf("\e[%"PRIu32";0H\e[2K", getHeight(game) + 1);
     allPlayersSummary(game);
 }
 

@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 /**
  * Current gamma game
@@ -52,14 +53,14 @@ static void gameLoop() {
         }
         else if (line[0] == 'b') {
             if (readNumbers(values, line + 1, 1))
-                printf("%lu\n",
+                printf("%"PRIu64"\n",
                        gamma_busy_fields(game, values[0]));
             else
                 errorMessage();
         }
         else if (line[0] == 'f') {
             if (readNumbers(values, line + 1, 1))
-                printf("%lu\n",
+                printf("%"PRIu64"\n",
                        gamma_free_fields(game, values[0]));
             else
                 errorMessage();

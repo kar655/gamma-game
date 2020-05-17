@@ -7,7 +7,23 @@ Uwaga: aktualna treść zadania znajduje się w [Moodle'u](https://moodle.mimuw.
 
 ### Opis programu
 
-Tegoroczne duże zadanie polega na zaimplementowaniu gry gammma.
-
+Tegoroczne duże zadanie polega na zaimplementowaniu gry gamma.
+Grę rozgrywa się na prostokątnej planszy, która składa się z jednakowych kwadratowych pól.
+Pola sąsiadujące na planszy to takie, które stykają się bokami.
+Pól stykających się tylko rogami nie uważamy za sąsiadujące.
+Pola tworzą obszar, jeśli z każdego z nich można dojść do innego,
+przechodząc jedynie przez pola sąsiadujące. Pojedyncze pole też jest obszarem.
+Grać może jedna lub więcej osób. Na początku gry plansza jest pusta.
+Gracze kolejno zajmują po jednym polu, stawiając na nim swój pionek.
+Gracz może zająć dowolne niezajęte pole, przestrzegając jedynie zasady,
+że zbiór pól zajętych przez tego samego gracza nie może w żadnej fazie gry
+składać się z więcej niż, będącej parametrem gry, maksymalnej liczby obszarów.
+Każdy gracz jeden raz w całej rozgrywce może wykonać złoty ruch, który polega
+na zabraniu z planszy pionka innego gracza i postawieniu w jego miejsce swojego
+pionka, ale ten ruch nadal nie może naruszać zasady maksymalnej liczby zajętych
+obszarów przez żadnego z graczy. Gracz, który nie jest w stanie wykonać ruchu
+zgodnego z powyższą zasadą, wypada z gry, ale może wrócić do gry po jakimś złotym
+ruchu innego gracza. Gra kończy się, gdy już żaden gracz nie może wykonać ruchu.
+Wygrywa gracz, który zajmie największą liczbę pól.
 
 */

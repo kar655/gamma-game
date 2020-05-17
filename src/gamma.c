@@ -8,6 +8,7 @@
 #include "gamma.h"
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 /**
  * Maximal number of golden moves of one player
@@ -250,8 +251,9 @@ char *gamma_board(gamma_t *g) {
 
     uint32_t numberLength = fieldLength(g);
 
-    size_t maxLength = sizeof(char) *
-                       (g->height * (g->width * numberLength + 1) + 1);
+    uint64_t maxLength =
+            sizeof(char) *
+            ((uint64_t) g->height * ((uint64_t) g->width * numberLength + 1) + 1);
     char *output = (char *) malloc(maxLength);
 
     if (output == NULL) {
@@ -270,7 +272,7 @@ char *gamma_board(gamma_t *g) {
                 output[length++] = '.';
             }
             else {
-                sprintf(integerString, "%d", getOwner(g, x, y));
+                sprintf(integerString, "%"PRIu32"", getOwner(g, x, y));
                 uint32_t len = strlen(integerString);
 
                 for (uint32_t i = 0; i < numberLength - len; i++)
@@ -303,8 +305,9 @@ uint32_t nextPlayerId(gamma_t *g, uint32_t last) {
 }
 
 void printPlayerInfo(gamma_t *g, uint32_t id) {
-    printf("PLAYER %u %lu %lu%s\n", id, gamma_busy_fields(g, id),
-           gamma_free_fields(g, id), gamma_golden_possible(g, id) ? " G" : "");
+    printf("PLAYER %"PRIu32" %"PRIu64" %"PRIu64"%s\n",
+           id, gamma_busy_fields(g, id), gamma_free_fields(g, id),
+           gamma_golden_possible(g, id) ? " G" : "");
 }
 
 char *updateField(gamma_t *g, uint32_t x, uint32_t y) {
@@ -321,7 +324,7 @@ char *updateField(gamma_t *g, uint32_t x, uint32_t y) {
         output[length] = '.';
     }
     else {
-        sprintf(integerString, "%d", getOwner(g, x, y));
+        sprintf(integerString, "%"PRIu32"", getOwner(g, x, y));
         uint32_t len = strlen(integerString);
 
         for (uint32_t i = 0; i < fl - len; i++)
@@ -344,13 +347,13 @@ inline uint32_t getHeight(gamma_t *g) {
 
 void allPlayersSummary(gamma_t *g) {
     for (uint32_t id = 1; id <= g->players; id++) {
-        printf("PLAYER %u %lu\n", id, gamma_busy_fields(g, id));
+        printf("PLAYER %"PRIu32" %"PRIu64"\n", id, gamma_busy_fields(g, id));
     }
 }
 
 uint32_t fieldLength(gamma_t *g) {
     char helper[32] = "";
-    sprintf(helper, "%u", g->players);
+    sprintf(helper, "%"PRIu32"", g->players);
     uint32_t numberLength = strlen(helper);
 
     // one extra free space

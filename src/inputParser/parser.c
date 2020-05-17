@@ -114,7 +114,7 @@ bool readNumbers(uint32_t values[], char *str, int expectingValues) {
         values[num] = result;
     }
 
-    // anything different than white spaces on the end of the line
+    // anything different than whitespaces on the end of the line
     if (strtok(str, " \t\v\f\r\n") != NULL)
         return false;
 

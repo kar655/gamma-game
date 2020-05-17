@@ -162,4 +162,4 @@ void allPlayersSummary(gamma_t *g);
  */
 uint32_t fieldLength(gamma_t *g);
 
-#endif /* GAMMA_H */
+#endif //GAMMA_H
