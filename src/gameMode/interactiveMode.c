@@ -11,9 +11,17 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include <string.h>
 
 #include <unistd.h>
 #include <termio.h>
+
+
+/** Sets background color to white */
+#define BACKGROUND_WHITE printf("%s", "\x1b[7m")
+
+/** Sets background color to default */
+#define COLOR_RESET printf("%s", "\x1b[0m")
 
 
 /**
@@ -29,7 +37,7 @@ uint32_t posY;
 
 
 /** @brief Moves special field.
- * Changes positon of special field base on which arrow key was pressed
+ * Changes position of special field base on which arrow key was pressed
  * @param num - last character of arrow key pressed
  */
 static void move(int num);
@@ -41,6 +49,8 @@ static void move(int num);
  * @return id of player after pressed key or 0 if EOF or everyone can't move
  */
 static uint32_t processChar(char ch, uint32_t id);
+
+static uint32_t fieldLength(uint32_t players);
 
 /** @brief Plays game in Interactive Mode
  * Read characters and prints results.
@@ -74,18 +84,18 @@ static char getch() {
 
 static void move(int num) {
     if (num == 65) // up
-        posY = (posY + 1) == getHeight(game) ? posY : posY + 1;
+        posY = (posY + 1) == gamma_get_height(game) ? posY : posY + 1;
     else if (num == 66) // down
         posY = posY == 0 ? 0 : posY - 1;
     else if (num == 67) // right
-        posX = (posX + 1) == getWidth(game) ? posX : posX + 1;
+        posX = (posX + 1) == gamma_get_width(game) ? posX : posX + 1;
     else if (num == 68) // left
         posX = posX == 0 ? 0 : posX - 1;
 }
 
 static uint32_t processChar(char ch, uint32_t id) {
     if (ch == 'c' || ch == 'C') {   // skip move
-        id = nextPlayerId(game, id);
+        id = gamma_next_player_id(game, id);
     }
     else if (ch == 27) {    // can be arrow key
         ch = getch();
@@ -103,12 +113,12 @@ static uint32_t processChar(char ch, uint32_t id) {
     }
     else if (ch == 32) { // space
         if (gamma_move(game, id, posX, posY)) {
-            id = nextPlayerId(game, id);
+            id = gamma_next_player_id(game, id);
         }
     }
     else if (ch == 'g' || ch == 'G') {
         if (gamma_golden_move(game, id, posX, posY)) {
-            id = nextPlayerId(game, id);
+            id = gamma_next_player_id(game, id);
         }
     }
     else if (ch == 4) // EOF
@@ -117,40 +127,87 @@ static uint32_t processChar(char ch, uint32_t id) {
     return id;
 }
 
+static uint32_t fieldLength(uint32_t players) {
+    char helper[32] = "";
+    sprintf(helper, "%"PRIu32"", players);
+    uint32_t numberLength = strlen(helper);
+
+    // one extra free space
+    if (numberLength > 1)
+        numberLength++;
+
+    return numberLength;
+}
+
 static void gameLoop() {
     uint32_t id = 1;
-    uint32_t fl = fieldLength(game);
+    uint32_t fl = gamma_field_length(game);
 
-    printPlayerInfo(game, id);
+    gamma_print_player_info(game, id);
 
-    // cursor to end of current field
-    printf("\e[%"PRIu32";%"PRIu32"H", getHeight(game) - posY, fl * (posX + 1));
+    // no cursor
+    printf("\e[?25l");
+
+    // cursor to beginning of current field
+    printf("\e[%"PRIu32";%"PRIu32"H", gamma_get_height(game) - posY,
+           fl * posX + 1);
+    BACKGROUND_WHITE;
+    textMessage(gamma_update_field(game, posX, posY));
+    printf("\e[%"PRIu32";%"PRIu32"H", gamma_get_height(game) - posY,
+           fl * posX + 1);
 
     while (id != 0) {
 
         fflush(stdout);
+        uint32_t previousX = posX;
+        uint32_t previousY = posY;
         id = processChar(getch(), id);
 
-        // cursor to beginning of current field
-        printf("\e[%"PRIu32";%"PRIu32"H", getHeight(game) - posY, fl * posX + 1);
+        // remove background color on previous field
+        COLOR_RESET;
+        textMessage(gamma_update_field(game, previousX, previousY));
 
-        textMessage(updateField(game, posX, posY));
+        // cursor to beginning of current field
+        printf("\e[%"PRIu32";%"PRIu32"H", gamma_get_height(game) - posY,
+               fl * posX + 1);
+
+        BACKGROUND_WHITE;
+        textMessage(gamma_update_field(game, posX, posY));
+        COLOR_RESET;
 
         // remove last line
-        printf("\e[%"PRIu32";0H\e[2K", getHeight(game) + 1);
+        printf("\e[%"PRIu32";0H\e[2K", gamma_get_height(game) + 1);
 
-        printPlayerInfo(game, id);
+        gamma_print_player_info(game, id);
 
-        // cursor to end of current field
-        printf("\e[%"PRIu32";%"PRIu32"H", getHeight(game) - posY, fl * (posX + 1));
+        // cursor to beginning of current field
+        printf("\e[%"PRIu32";%"PRIu32"H", gamma_get_height(game) - posY,
+               fl * posX + 1);
     }
 
+    COLOR_RESET;
+    textMessage(gamma_update_field(game, posX, posY));
+
+    // enable cursor
+    printf("\e[?25h");
+
     // remove last line
-    printf("\e[%"PRIu32";0H\e[2K", getHeight(game) + 1);
-    allPlayersSummary(game);
+    printf("\e[%"PRIu32";0H\e[2K", gamma_get_height(game) + 1);
+    gamma_all_players_summary(game);
 }
 
 bool initializeInteractive(uint32_t values[]) {
+    // get console width/height
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+    // console is too small; one extra for player summary
+    if (w.ws_col <= values[0] * fieldLength(values[2])
+        || w.ws_row - 1 <= values[1]) {
+        printf("Console is too small to hold game of this size\n");
+        return false;
+    }
+
     game = gamma_new(values[0], values[1], values[2], values[3]);
     char *board = gamma_board(game);
 

@@ -96,6 +96,7 @@ inline void errorMessage() {
     fprintf(stderr, "ERROR %d\n", lineNumber);
 }
 
+// todo no error message when number with + i.e. B +3 5 2 1
 bool readNumbers(uint32_t values[], char *str, int expectingValues) {
     uint64_t result;
     char *endPtr;

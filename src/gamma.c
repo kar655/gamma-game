@@ -240,6 +240,19 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player) {
     if (wrongInput(g, player) || !hasGoldenMoves(g, player))
         return false;
 
+    // TODO z tymi kolorami to losowy kolor dla kazdego gracza
+    //  moze jakies kolory % 10
+    //  i jak zmienia sie kursor to tlo na biale
+
+//    // No other player took any field
+//    if (g->available + (uint64_t) getPlayer(g, player)->owned
+//        == (uint64_t) g->width * (uint64_t) g->height)
+//        return false;
+//
+//    if (getAreas(g, player) < g->areas)
+//        return true;
+
+
     return g->available +
            (uint64_t) getPlayer(g, player)->owned
            != (uint64_t) g->width * (uint64_t) g->height;
@@ -249,7 +262,7 @@ char *gamma_board(gamma_t *g) {
     if (g == NULL)
         return NULL;
 
-    uint32_t numberLength = fieldLength(g);
+    uint32_t numberLength = gamma_field_length(g);
 
     uint64_t maxLength =
             sizeof(char) *
@@ -289,7 +302,7 @@ char *gamma_board(gamma_t *g) {
     return output;
 }
 
-uint32_t nextPlayerId(gamma_t *g, uint32_t last) {
+uint32_t gamma_next_player_id(gamma_t *g, uint32_t last) {
     uint32_t temp;
 
     for (uint32_t p = last; p < last + g->players; p++) {
@@ -304,17 +317,17 @@ uint32_t nextPlayerId(gamma_t *g, uint32_t last) {
     return 0;
 }
 
-void printPlayerInfo(gamma_t *g, uint32_t id) {
+void gamma_print_player_info(gamma_t *g, uint32_t id) {
     printf("PLAYER %"PRIu32" %"PRIu64" %"PRIu64"%s\n",
            id, gamma_busy_fields(g, id), gamma_free_fields(g, id),
            gamma_golden_possible(g, id) ? " G" : "");
 }
 
-char *updateField(gamma_t *g, uint32_t x, uint32_t y) {
+char *gamma_update_field(gamma_t *g, uint32_t x, uint32_t y) {
     uint32_t length = 0;
     char integerString[32] = "";
 
-    uint32_t fl = fieldLength(g);
+    uint32_t fl = gamma_field_length(g);
     char *output = malloc(fl + 1);
 
     if (isEmpty(g, x, y)) {
@@ -337,21 +350,21 @@ char *updateField(gamma_t *g, uint32_t x, uint32_t y) {
     return output;
 }
 
-inline uint32_t getWidth(gamma_t *g) {
+inline uint32_t gamma_get_width(gamma_t *g) {
     return g->width;
 }
 
-inline uint32_t getHeight(gamma_t *g) {
+inline uint32_t gamma_get_height(gamma_t *g) {
     return g->height;
 }
 
-void allPlayersSummary(gamma_t *g) {
+void gamma_all_players_summary(gamma_t *g) {
     for (uint32_t id = 1; id <= g->players; id++) {
         printf("PLAYER %"PRIu32" %"PRIu64"\n", id, gamma_busy_fields(g, id));
     }
 }
 
-uint32_t fieldLength(gamma_t *g) {
+uint32_t gamma_field_length(gamma_t *g) {
     char helper[32] = "";
     sprintf(helper, "%"PRIu32"", g->players);
     uint32_t numberLength = strlen(helper);

@@ -31,7 +31,7 @@ void errorMessage();
  * @param values - Array where read numbers will be stored
  * @param str - string with numbers
  * @param expectingValues - number of numbers to be read
- * @return true if exaclty @p expectingValues numbers were read and the string
+ * @return true if exactly @p expectingValues numbers were read and the string
  * contains only whitespaces else false
  */
 bool readNumbers(uint32_t values[], char *str, int expectingValues);

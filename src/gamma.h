@@ -117,14 +117,14 @@ char *gamma_board(gamma_t *g);
  * @param last - id of player who moved last
  * @return id of next player or 0 if everyone can't move
  */
-uint32_t nextPlayerId(gamma_t *g, uint32_t last);
+uint32_t gamma_next_player_id(gamma_t *g, uint32_t last);
 
 /** @brief Prints summary of player.
  * Prints line with information about player with id @p id
  * @param g - current game
  * @param id - player's id
  */
-void printPlayerInfo(gamma_t *g, uint32_t id);
+void gamma_print_player_info(gamma_t *g, uint32_t id);
 
 /** @brief Generates string of field.
  * Generates string of field at (@p x, @p y)
@@ -133,33 +133,33 @@ void printPlayerInfo(gamma_t *g, uint32_t id);
  * @param y - second coordinate
  * @return view of that field
  */
-char *updateField(gamma_t *g, uint32_t x, uint32_t y);
+char *gamma_update_field(gamma_t *g, uint32_t x, uint32_t y);
 
 /** @brief Return game width.
  * return gamma game @p g width
  * @param g - current game
  * @return game width
  */
-uint32_t getWidth(gamma_t *g);
+uint32_t gamma_get_width(gamma_t *g);
 
 /** @brief Return game height.
  * return gamma game @p g height
  * @param g - current game
  * @return game height
  */
-uint32_t getHeight(gamma_t *g);
+uint32_t gamma_get_height(gamma_t *g);
 
 /** @brief Prints short summary for every player.
  * Prints players' ids and gamma_busy_field in new lines
  * @param g - current game
  */
-void allPlayersSummary(gamma_t *g);
+void gamma_all_players_summary(gamma_t *g);
 
 /** @brief Calculates length of biggest possible field.
  * Check maximum player's id and calculates field length
  * @param g - current game
  * @return length of field
  */
-uint32_t fieldLength(gamma_t *g);
+uint32_t gamma_field_length(gamma_t *g);
 
 #endif //GAMMA_H
