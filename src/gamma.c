@@ -240,22 +240,47 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player) {
     if (wrongInput(g, player) || !hasGoldenMoves(g, player))
         return false;
 
-    // TODO z tymi kolorami to losowy kolor dla kazdego gracza
-    //  moze jakies kolory % 10
-    //  i jak zmienia sie kursor to tlo na biale
+    // No other player took any field
+    if (g->available + (uint64_t) getPlayer(g, player)->owned
+        == (uint64_t) g->width * (uint64_t) g->height)
+        return false;
 
-//    // No other player took any field
-//    if (g->available + (uint64_t) getPlayer(g, player)->owned
-//        == (uint64_t) g->width * (uint64_t) g->height)
-//        return false;
-//
-//    if (getAreas(g, player) < g->areas)
-//        return true;
+    if (getAreas(g, player) < g->areas)
+        return true;
 
+    uint32_t goldenUsed = getPlayer(g, player)->goldenMoves;
 
-    return g->available +
-           (uint64_t) getPlayer(g, player)->owned
-           != (uint64_t) g->width * (uint64_t) g->height;
+    for (uint32_t x = 0; x < g->width; x++) {
+        for (uint32_t y = 0; y < g->height; y++) {
+            if (!isEmpty(g, x, y) && !isMine(g, player, x, y)
+                && numNeighbours(g, player, x, y) > 0) {
+
+                getPlayer(g, player)->goldenMoves = 0;
+
+                Member attackedPlayer = getPlayer(g, getOwner(g, x, y));
+                uint32_t previousOwner = attackedPlayer->id;
+                uint32_t previousOwnerGolden = attackedPlayer->goldenMoves;
+                attackedPlayer->goldenMoves = 0;
+
+                if (gamma_golden_move(g, player, x, y)) {
+                    gamma_golden_move(g, previousOwner, x, y);
+                    getPlayer(g, player)->goldenMoves = goldenUsed;
+                    attackedPlayer->goldenMoves = previousOwnerGolden;
+
+                    return true;
+                }
+                else {
+                    attackedPlayer->goldenMoves = previousOwnerGolden;
+                }
+            }
+        }
+    }
+
+    return false;
+
+//    return g->available +
+//           (uint64_t) getPlayer(g, player)->owned
+//           != (uint64_t) g->width * (uint64_t) g->height;
 }
 
 char *gamma_board(gamma_t *g) {

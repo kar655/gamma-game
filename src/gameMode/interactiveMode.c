@@ -23,7 +23,6 @@
 /** Sets background color to default */
 #define COLOR_RESET printf("%s", "\x1b[0m")
 
-
 /**
  * Current gamma game
  */
@@ -50,6 +49,11 @@ static void move(int num);
  */
 static uint32_t processChar(char ch, uint32_t id);
 
+/** @brief Calculates length of field.
+ * Calculates what will be field length in game with @p players players.
+ * @param players - number of players in game
+ * @return length of field
+ */
 static uint32_t fieldLength(uint32_t players);
 
 /** @brief Plays game in Interactive Mode

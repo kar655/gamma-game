@@ -24,8 +24,6 @@ set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
 # Wskazujemy pliki źródłowe.
 set(SOURCE_FILES
 
-    src/gamma_main.c
-
     src/findUnionLib/findUnion.c src/findUnionLib/findUnion.h
     src/playerLib/player.c src/playerLib/player.h
     src/gammaLib/gammaEngineLib.c src/gammaLib/gammaEngineLib.h
@@ -35,7 +33,21 @@ set(SOURCE_FILES
     src/gameMode/interactiveMode.c src/gameMode/interactiveMode.h)
 
 # Wskazujemy plik wykonywalny.
-add_executable(gamma ${SOURCE_FILES})
+add_executable(gamma src/gamma_main.c ${SOURCE_FILES})
+
+# do testowania todo remove
+## Wskazujemy plik wykonywalny.
+#add_executable(gamma ${TEST_FILE} ${SOURCE_FILES})
+
+
+set(TEST_SOURCE_FILES
+
+    src/gamma_test.c)
+
+
+# Wskazujemy plik wykonywalny dla testów silnika.
+add_executable(test EXCLUDE_FROM_ALL ${TEST_SOURCE_FILES} ${SOURCE_FILES}) # todo nie wiem czy to minimalne wymagania
+set_target_properties(test PROPERTIES OUTPUT_NAME gamma_test)
 
 
 # Dodajemy obsługę Doxygena: sprawdzamy, czy jest zainstalowany i jeśli tak to:
