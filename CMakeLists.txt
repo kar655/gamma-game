@@ -35,10 +35,6 @@ set(SOURCE_FILES
 # Wskazujemy plik wykonywalny.
 add_executable(gamma src/gamma_main.c ${SOURCE_FILES})
 
-# do testowania todo remove
-## Wskazujemy plik wykonywalny.
-#add_executable(gamma ${TEST_FILE} ${SOURCE_FILES})
-
 
 set(TEST_SOURCE_FILES
 

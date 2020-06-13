@@ -23,13 +23,6 @@
  */
 int lineNumber = 0;
 
-/** @brief Shifts string.
- * Shift string by removing whitespaces
- * @param str - processed string
- * @return true if @p str contains only whitespaces or digits else false
- */
-static bool shiftString(char **str);
-
 /** @brief Check if number is correct.
  * Check if @p num fits in uint32_t
  * @param num - checked number
@@ -42,21 +35,6 @@ static bool correctNumber(uint64_t num);
  * @return true if game was played or EOF else false
  */
 static bool gameSuccess();
-
-static bool shiftString(char **str) {
-    uint64_t shift = 0;
-    // not a number
-    while(((*str)[shift] < '0' || (*str)[shift] > '9')) {
-        // not a whitespace
-        if (isspace(*str[shift]) == 0) {
-            return false;
-        }
-        shift++;
-    }
-    *str += shift;
-
-    return true;
-}
 
 static inline bool correctNumber(uint64_t num) {
     return num <= UINT32_MAX;
@@ -128,8 +106,16 @@ bool readNumbers(uint32_t values[], char *str, int expectingValues) {
 
     for (int num = 0; num < expectingValues; num++) {
 
-        if (!shiftString(&str))
-            return false;
+        uint64_t shift = 0;
+        // not a number
+        while((str[shift] < '0' || str[shift] > '9')) {
+            // not a whitespace
+            if (isspace(str[shift]) == 0) {
+                return false;
+            }
+            shift++;
+        }
+        str += shift;
 
         result = strtoul(str, &endPtr, 10);
 

@@ -344,7 +344,8 @@ void gamma_print_player_info(gamma_t *g, uint32_t id) {
            "Can take %"PRIu64" new fields\n"
            "%s\n",
            id, gamma_busy_fields(g, id), gamma_free_fields(g, id),
-           gamma_golden_possible(g, id) ? "Can use golden move" : "Can't use golden move");
+           gamma_golden_possible(g, id) ?
+           "Can use golden move" : "Can't use golden move");
 }
 
 char *gamma_update_field(gamma_t *g, uint32_t x, uint32_t y) {
