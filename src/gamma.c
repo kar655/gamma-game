@@ -278,6 +278,7 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player) {
 
     return false;
 
+// todo
 //    return g->available +
 //           (uint64_t) getPlayer(g, player)->owned
 //           != (uint64_t) g->width * (uint64_t) g->height;
@@ -385,7 +386,8 @@ inline uint32_t gamma_get_height(gamma_t *g) {
 
 void gamma_all_players_summary(gamma_t *g) {
     for (uint32_t id = 1; id <= g->players; id++) {
-        printf("PLAYER %"PRIu32" %"PRIu64"\n", id, gamma_busy_fields(g, id));
+        printf("PLAYER %"PRIu32" owns %"PRIu64" fields\n", id,
+               gamma_busy_fields(g, id));
     }
 }
 

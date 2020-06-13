@@ -104,7 +104,19 @@ bool readNumbers(uint32_t values[], char *str, int expectingValues) {
     if (strlen(str) == 0 || isspace(str[0]) == 0) // no free space
         return false;
 
+
     for (int num = 0; num < expectingValues; num++) {
+
+        uint64_t shift = 0;
+        // not a number
+        while((str[shift] < '0' || str[shift] > '9')) {
+            // not a whitespace
+            if (isspace(str[shift]) == 0) {
+                return false;
+            }
+            shift++;
+        }
+        str += shift;
 
         result = strtoul(str, &endPtr, 10);
 

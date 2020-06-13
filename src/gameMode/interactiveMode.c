@@ -205,9 +205,9 @@ bool initializeInteractive(uint32_t values[]) {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-    // console is too small; one extra for player summary
+    // console is too small
     if (w.ws_col <= values[0] * fieldLength(values[2])
-        || w.ws_row - 1 <= values[1]) {
+        || w.ws_row <= values[1] + 1) {
         printf("Console is too small to hold game of this size\n");
         return false;
     }
