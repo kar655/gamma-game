@@ -18,10 +18,10 @@
 
 
 /** Sets background color to white */
-#define BACKGROUND_WHITE printf("%s", "\x1b[7m")
+#define BACKGROUND_WHITE printf("\x1b[7m")
 
 /** Sets background color to default */
-#define COLOR_RESET printf("%s", "\x1b[0m")
+#define COLOR_RESET printf("\x1b[0m")
 
 /**
  * Current gamma game
@@ -180,7 +180,7 @@ static void gameLoop() {
         COLOR_RESET;
 
         // remove last line
-        printf("\e[%"PRIu32";0H\e[2K", gamma_get_height(game) + 1);
+        printf("\e[%"PRIu32";0H\e[J", gamma_get_height(game) + 1);
 
         gamma_print_player_info(game, id);
 
@@ -196,7 +196,7 @@ static void gameLoop() {
     printf("\e[?25h");
 
     // remove last line
-    printf("\e[%"PRIu32";0H\e[2K", gamma_get_height(game) + 1);
+    printf("\e[%"PRIu32";0H\e[J", gamma_get_height(game) + 1);
     gamma_all_players_summary(game);
 }
 

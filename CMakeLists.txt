@@ -44,9 +44,8 @@ set(TEST_SOURCE_FILES
 
     src/gamma_test.c)
 
-
 # Wskazujemy plik wykonywalny dla testów silnika.
-add_executable(test EXCLUDE_FROM_ALL ${TEST_SOURCE_FILES} ${SOURCE_FILES}) # todo nie wiem czy to minimalne wymagania
+add_executable(test EXCLUDE_FROM_ALL ${TEST_SOURCE_FILES} ${SOURCE_FILES})
 set_target_properties(test PROPERTIES OUTPUT_NAME gamma_test)
 
 

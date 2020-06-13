@@ -277,11 +277,6 @@ bool gamma_golden_possible(gamma_t *g, uint32_t player) {
     }
 
     return false;
-
-// todo
-//    return g->available +
-//           (uint64_t) getPlayer(g, player)->owned
-//           != (uint64_t) g->width * (uint64_t) g->height;
 }
 
 char *gamma_board(gamma_t *g) {
@@ -344,9 +339,12 @@ uint32_t gamma_next_player_id(gamma_t *g, uint32_t last) {
 }
 
 void gamma_print_player_info(gamma_t *g, uint32_t id) {
-    printf("PLAYER %"PRIu32" %"PRIu64" %"PRIu64"%s\n",
+    printf("PLAYER %"PRIu32"\n"
+           "Owns %"PRIu64" fields\n"
+           "Can take %"PRIu64" new fields\n"
+           "%s\n",
            id, gamma_busy_fields(g, id), gamma_free_fields(g, id),
-           gamma_golden_possible(g, id) ? " G" : "");
+           gamma_golden_possible(g, id) ? "Can use golden move" : "Can't use golden move");
 }
 
 char *gamma_update_field(gamma_t *g, uint32_t x, uint32_t y) {
