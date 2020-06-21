@@ -1,0 +1,4 @@
+<map id="initBoard" name="initBoard">
+<area shape="rect" id="node1" title="Initialize game board." alt="" coords="5,5,87,32"/>
+<area shape="rect" id="node2" href="$findUnion_8c.html#ab42b6424f5ab5db30c6cc44898040454" title="Creates new root." alt="" coords="135,5,213,32"/>
+</map>

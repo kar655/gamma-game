@@ -1,0 +1,5 @@
+<map id="gamma_busy_fields" name="gamma_busy_fields">
+<area shape="rect" id="node1" title="Podaje liczbę pól zajętych przez gracza." alt="" coords="5,31,157,57"/>
+<area shape="rect" id="node2" href="$gammaEngineLib_8c.html#a6e1132452d25851dd251a71972d0fa21" title="Get player from current game." alt="" coords="211,5,295,32"/>
+<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#a592428ec81af39f2fb0bdef7e3319612" title="Check input data." alt="" coords="205,56,300,83"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="readNumbers" name="readNumbers">
+<area shape="rect" id="node1" title="Extract number from str." alt="" coords="5,5,116,32"/>
+<area shape="rect" id="node2" href="$parser_8c.html#afc14d2d0b355f95b2c5c83a4f356c4e0" title="Check if number is correct." alt="" coords="164,5,283,32"/>
+</map>

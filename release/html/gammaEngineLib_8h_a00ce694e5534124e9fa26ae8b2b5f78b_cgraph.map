@@ -1,0 +1,6 @@
+<map id="numEmpty" name="numEmpty">
+<area shape="rect" id="node1" title="Calculates number of empty nearby fields." alt="" coords="5,56,99,83"/>
+<area shape="rect" id="node2" href="$gammaEngineLib_8c.html#a84fc8aa9e9a2fe5da57f819269b3babf" title="Check if Node is empty." alt="" coords="155,5,264,32"/>
+<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#a2ac65b1dd5c248a1cd320219ea7afb56" title="Load 4 nearby fields." alt="" coords="157,56,261,83"/>
+<area shape="rect" id="node4" href="$gammaEngineLib_8c.html#a91aadd47653a9c93f2cca1ab960bc135" title="Returns number of friendly fields connected to certain field." alt="" coords="147,107,272,133"/>
+</map>

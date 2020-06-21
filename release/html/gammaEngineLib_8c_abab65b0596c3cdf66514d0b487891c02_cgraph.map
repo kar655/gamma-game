@@ -1,0 +1,8 @@
+<map id="buildConnected" name="buildConnected">
+<area shape="rect" id="node1" title="Build areas on nearby fields." alt="" coords="5,100,128,127"/>
+<area shape="rect" id="node2" href="$gammaEngineLib_8c.html#ac1fa9ea5f4328cce46286115f40ece75" title="Builds connections of fields." alt="" coords="176,100,260,127"/>
+<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#ac647b6815efd5b0a5968b4eec9531d2c" title="Give bottom field." alt="" coords="308,5,388,32"/>
+<area shape="rect" id="node4" href="$gammaEngineLib_8c.html#ac43fbaada1476c4264228d8a1328a24b" title="Give left field." alt="" coords="314,63,382,89"/>
+<area shape="rect" id="node5" href="$gammaEngineLib_8c.html#af8827a6df850f85b550b66779e9924af" title="Give right field." alt="" coords="309,125,387,152"/>
+<area shape="rect" id="node6" href="$gammaEngineLib_8c.html#a236c309b875cd739cd8c301e90cb3e01" title="Give upper field." alt="" coords="317,188,379,215"/>
+</map>

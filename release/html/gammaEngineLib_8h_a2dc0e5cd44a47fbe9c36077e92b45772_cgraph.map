@@ -1,0 +1,4 @@
+<map id="hasGoldenMoves" name="hasGoldenMoves">
+<area shape="rect" id="node1" title="Check if player has golden move." alt="" coords="5,5,139,32"/>
+<area shape="rect" id="node2" href="$gammaEngineLib_8c.html#a6e1132452d25851dd251a71972d0fa21" title="Get player from current game." alt="" coords="187,5,271,32"/>
+</map>

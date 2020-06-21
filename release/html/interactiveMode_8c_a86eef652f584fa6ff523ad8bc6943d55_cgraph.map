@@ -1,0 +1,8 @@
+<map id="processChar" name="processChar">
+<area shape="rect" id="node1" title="Process pressed key." alt="" coords="5,107,108,133"/>
+<area shape="rect" id="node2" href="$gamma_8c.html#acbc00e267aa73e496b21366cbf3abcea" title="Wykonuje złoty ruch." alt="" coords="160,5,327,32"/>
+<area shape="rect" id="node3" href="$gamma_8c.html#a393107e99247f4068e2a2c8a0af70e43" title="Wykonuje ruch." alt="" coords="185,56,301,83"/>
+<area shape="rect" id="node4" href="$gamma_8c.html#a602fa1b7b2041b004f5bffc25b46dd61" title="Id of next player in current game." alt="" coords="156,107,331,133"/>
+<area shape="rect" id="node5" href="$interactiveMode_8c.html#a367d805d41cc6b8491ace7d81b41f3df" title="Reads character from input." alt="" coords="214,157,273,184"/>
+<area shape="rect" id="node6" href="$interactiveMode_8c.html#a3a46820dac53652d56f040ac2662b4ea" title="Moves special field." alt="" coords="214,208,273,235"/>
+</map>

@@ -1,0 +1,5 @@
+/home/karol/Desktop/MIMUW/IPP/gamma_game/IPP-kz418489/release/CMakeFiles/rebuild_cache.dir
+/home/karol/Desktop/MIMUW/IPP/gamma_game/IPP-kz418489/release/CMakeFiles/edit_cache.dir
+/home/karol/Desktop/MIMUW/IPP/gamma_game/IPP-kz418489/release/CMakeFiles/doc.dir
+/home/karol/Desktop/MIMUW/IPP/gamma_game/IPP-kz418489/release/CMakeFiles/gamma.dir
+/home/karol/Desktop/MIMUW/IPP/gamma_game/IPP-kz418489/release/CMakeFiles/test.dir
