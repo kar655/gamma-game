@@ -1,8 +1,0 @@
-<map id="numNeighbours" name="numNeighbours">
-<area shape="rect" id="node1" title="Returns number of friendly fields connected to certain field." alt="" coords="5,107,131,133"/>
-<area shape="rect" id="node2" href="$gammaEngineLib_8c.html#ac647b6815efd5b0a5968b4eec9531d2c" title="Give bottom field." alt="" coords="188,5,268,32"/>
-<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#ac43fbaada1476c4264228d8a1328a24b" title="Give left field." alt="" coords="194,56,262,83"/>
-<area shape="rect" id="node4" href="$gammaEngineLib_8c.html#af8827a6df850f85b550b66779e9924af" title="Give right field." alt="" coords="189,107,267,133"/>
-<area shape="rect" id="node5" href="$gammaEngineLib_8c.html#a236c309b875cd739cd8c301e90cb3e01" title="Give upper field." alt="" coords="197,157,259,184"/>
-<area shape="rect" id="node6" href="$gammaEngineLib_8c.html#a10f3e10a7a8a5f50b9d6511cbae34c12" title="Checks if player owns field." alt="" coords="179,208,277,235"/>
-</map>

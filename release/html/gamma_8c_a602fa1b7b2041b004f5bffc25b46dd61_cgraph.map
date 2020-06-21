@@ -1,5 +1,0 @@
-<map id="gamma_next_player_id" name="gamma_next_player_id">
-<area shape="rect" id="node1" title="Id of next player in current game." alt="" coords="5,31,180,57"/>
-<area shape="rect" id="node2" href="$gamma_8c.html#a07f193f5947c044de39455c545073e3d" title="Podaje liczbę pól, jakie jeszcze gracz może zająć." alt="" coords="247,5,393,32"/>
-<area shape="rect" id="node3" href="$gamma_8c.html#aa94d7501acaf540b67bc45061492fbc5" title="Sprawdza, czy gracz może wykonać złoty ruch." alt="" coords="228,56,412,83"/>
-</map>

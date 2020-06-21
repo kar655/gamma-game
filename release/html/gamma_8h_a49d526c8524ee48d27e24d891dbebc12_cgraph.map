@@ -1,6 +1,0 @@
-<map id="gamma_update_field" name="gamma_update_field">
-<area shape="rect" id="node1" title="Generates string of field." alt="" coords="5,56,164,83"/>
-<area shape="rect" id="node2" href="$gamma_8c.html#a7735f1e3cd3b34552e91aaae43e329e8" title="Calculates length of biggest possible field." alt="" coords="212,5,367,32"/>
-<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#abaa208c2911c12d4c83e8ef5bdb25c96" title="Returns owner&#39;s id." alt="" coords="247,56,332,83"/>
-<area shape="rect" id="node4" href="$gammaEngineLib_8c.html#a7156bad85e5f4c81e72ab771dd7598b9" title="Check if field is empty." alt="" coords="252,107,327,133"/>
-</map>

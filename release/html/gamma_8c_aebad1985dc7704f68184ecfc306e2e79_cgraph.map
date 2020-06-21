@@ -1,5 +1,0 @@
-<map id="goldenMoveFinish" name="goldenMoveFinish">
-<area shape="rect" id="node1" title="Use gamma_move() on attacked field." alt="" coords="5,31,144,57"/>
-<area shape="rect" id="node2" href="$gamma_8c.html#a393107e99247f4068e2a2c8a0af70e43" title="Wykonuje ruch." alt="" coords="192,5,308,32"/>
-<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#a6e1132452d25851dd251a71972d0fa21" title="Get player from current game." alt="" coords="356,31,440,57"/>
-</map>

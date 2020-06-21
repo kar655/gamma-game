@@ -1,8 +1,0 @@
-<map id="clearRelations" name="clearRelations">
-<area shape="rect" id="node1" title="Clear relations in area." alt="" coords="5,107,120,133"/>
-<area shape="rect" id="node2" href="$findUnion_8c.html#aad6b1eaeb13acb9928f34983f817f362" title="Clears temporary data." alt="" coords="168,5,287,32"/>
-<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#ac647b6815efd5b0a5968b4eec9531d2c" title="Give bottom field." alt="" coords="187,56,267,83"/>
-<area shape="rect" id="node4" href="$gammaEngineLib_8c.html#ac43fbaada1476c4264228d8a1328a24b" title="Give left field." alt="" coords="193,107,261,133"/>
-<area shape="rect" id="node5" href="$gammaEngineLib_8c.html#af8827a6df850f85b550b66779e9924af" title="Give right field." alt="" coords="189,157,266,184"/>
-<area shape="rect" id="node6" href="$gammaEngineLib_8c.html#a236c309b875cd739cd8c301e90cb3e01" title="Give upper field." alt="" coords="197,208,258,235"/>
-</map>

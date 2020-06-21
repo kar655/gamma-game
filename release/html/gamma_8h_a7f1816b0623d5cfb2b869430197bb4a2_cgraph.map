@@ -1,6 +1,0 @@
-<map id="gamma_board" name="gamma_board">
-<area shape="rect" id="node1" title="Daje napis opisujący stan planszy." alt="" coords="5,56,121,83"/>
-<area shape="rect" id="node2" href="$gamma_8c.html#a7735f1e3cd3b34552e91aaae43e329e8" title="Calculates length of biggest possible field." alt="" coords="169,5,324,32"/>
-<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#abaa208c2911c12d4c83e8ef5bdb25c96" title="Returns owner&#39;s id." alt="" coords="204,56,289,83"/>
-<area shape="rect" id="node4" href="$gammaEngineLib_8c.html#a7156bad85e5f4c81e72ab771dd7598b9" title="Check if field is empty." alt="" coords="209,107,284,133"/>
-</map>

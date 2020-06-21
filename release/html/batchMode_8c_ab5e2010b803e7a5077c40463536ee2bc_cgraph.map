@@ -1,7 +1,0 @@
-<map id="initializeBatch" name="initializeBatch">
-<area shape="rect" id="node1" title="Initialize game in Batch mode." alt="" coords="5,81,120,108"/>
-<area shape="rect" id="node2" href="$batchMode_8c.html#a7af01f2f322707f757e59b4baa685b1a" title="Plays game in Batch Mode Reads lines and prints results." alt="" coords="176,5,267,32"/>
-<area shape="rect" id="node3" href="$gamma_8c.html#ade4b01ede66f2dba4d9185bac81f9846" title="Usuwa strukturę przechowującą stan gry." alt="" coords="323,81,443,108"/>
-<area shape="rect" id="node4" href="$gamma_8c.html#ae924a4dd60bbf992d534b67bc60e490e" title="Tworzy strukturę przechowującą stan gry." alt="" coords="168,107,275,133"/>
-<area shape="rect" id="node5" href="$parser_8c.html#a557eda3b26337d392ecaecab5f9867cc" title="Prints ok message." alt="" coords="174,157,269,184"/>
-</map>

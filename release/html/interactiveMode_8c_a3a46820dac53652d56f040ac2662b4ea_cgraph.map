@@ -1,5 +1,0 @@
-<map id="move" name="move">
-<area shape="rect" id="node1" title="Moves special field." alt="" coords="5,31,64,57"/>
-<area shape="rect" id="node2" href="$gamma_8c.html#a1ffbdb0cb93ee51be74cf88ddaa6cb92" title="Return game height." alt="" coords="112,5,260,32"/>
-<area shape="rect" id="node3" href="$gamma_8c.html#ad121e677bc3791ca5f7f0182a5f63add" title="Return game width." alt="" coords="115,56,257,83"/>
-</map>

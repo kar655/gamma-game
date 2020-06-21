@@ -1,9 +1,0 @@
-<map id="buildArea" name="buildArea">
-<area shape="rect" id="node1" title="Builds connections of fields." alt="" coords="5,132,89,159"/>
-<area shape="rect" id="node2" href="$gammaEngineLib_8c.html#ac647b6815efd5b0a5968b4eec9531d2c" title="Give bottom field." alt="" coords="141,5,221,32"/>
-<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#ac43fbaada1476c4264228d8a1328a24b" title="Give left field." alt="" coords="147,56,215,83"/>
-<area shape="rect" id="node4" href="$gammaEngineLib_8c.html#af8827a6df850f85b550b66779e9924af" title="Give right field." alt="" coords="142,107,219,133"/>
-<area shape="rect" id="node5" href="$gammaEngineLib_8c.html#a236c309b875cd739cd8c301e90cb3e01" title="Give upper field." alt="" coords="150,157,211,184"/>
-<area shape="rect" id="node6" href="$findUnion_8c.html#a1365ea42481a3b0509a03e4de068b8d6" title="Merge two roots." alt="" coords="149,208,213,235"/>
-<area shape="rect" id="node7" href="$findUnion_8c.html#aac65dfc83796562f216ac7595f95313d" title="Check if nodes have same root." alt="" coords="137,259,224,285"/>
-</map>

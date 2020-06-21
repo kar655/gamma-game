@@ -1,5 +1,0 @@
-<map id="setNearbyFalse" name="setNearbyFalse">
-<area shape="rect" id="node1" title="Set nearby field added to false." alt="" coords="5,31,128,57"/>
-<area shape="rect" id="node2" href="$gammaEngineLib_8c.html#a10f3e10a7a8a5f50b9d6511cbae34c12" title="Checks if player owns field." alt="" coords="183,5,281,32"/>
-<area shape="rect" id="node3" href="$findUnion_8c.html#a2fd462429c12c41b44d9792203288b0a" title="Set elem added." alt="" coords="176,56,288,83"/>
-</map>

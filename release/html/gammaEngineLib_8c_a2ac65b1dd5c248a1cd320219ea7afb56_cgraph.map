@@ -1,7 +1,0 @@
-<map id="nearbyFields" name="nearbyFields">
-<area shape="rect" id="node1" title="Load 4 nearby fields." alt="" coords="5,81,109,108"/>
-<area shape="rect" id="node2" href="$gammaEngineLib_8c.html#ac647b6815efd5b0a5968b4eec9531d2c" title="Give bottom field." alt="" coords="157,5,237,32"/>
-<area shape="rect" id="node3" href="$gammaEngineLib_8c.html#ac43fbaada1476c4264228d8a1328a24b" title="Give left field." alt="" coords="163,56,231,83"/>
-<area shape="rect" id="node4" href="$gammaEngineLib_8c.html#af8827a6df850f85b550b66779e9924af" title="Give right field." alt="" coords="159,107,236,133"/>
-<area shape="rect" id="node5" href="$gammaEngineLib_8c.html#a236c309b875cd739cd8c301e90cb3e01" title="Give upper field." alt="" coords="167,157,228,184"/>
-</map>
